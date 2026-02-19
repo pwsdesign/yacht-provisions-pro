@@ -108,33 +108,33 @@ function PitchDeck({ onFinish }) {
       </div>
 
       {/* Bottom nav */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+      <div className="pitch-bottom-nav" style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="pitch-dots" style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {slideNames.map((name, i) => (
             <button key={i} onClick={() => { if (!transitioning) { setTransitioning(true); setTimeout(() => { setCurrentSlide(i - 1); setTransitioning(false); }, 400); }}}
               style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 20, background: currentSlide === i - 1 ? COLORS.accentDim : "transparent", border: `1px solid ${currentSlide === i - 1 ? COLORS.accent + "44" : "transparent"}`, cursor: "pointer", transition: "all 0.3s" }}>
               <div style={{ width: currentSlide === i - 1 ? 24 : 8, height: 8, borderRadius: 4, background: currentSlide >= i - 1 ? COLORS.accent : COLORS.muted + "44", transition: "all 0.4s ease" }} />
-              {currentSlide === i - 1 && <span style={{ fontSize: 11, color: COLORS.accent, fontWeight: 600, letterSpacing: 0.5 }}>{name}</span>}
+              <span className="pitch-dot-label" style={{ fontSize: 11, color: COLORS.accent, fontWeight: 600, letterSpacing: 0.5, display: currentSlide === i - 1 ? "inline" : "none" }}>{name}</span>
             </button>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 12 }}>
+        <div className="pitch-nav-buttons" style={{ display: "flex", gap: 12 }}>
           {currentSlide > -1 && (
             <button onClick={goPrev} className="hover-lift" style={{ padding: "12px 24px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", backdropFilter: "blur(10px)" }}>← Back</button>
           )}
-          <button onClick={goNext} className="hover-lift" style={{
+          <button onClick={goNext} className="hover-lift pitch-next-btn" style={{
             padding: "12px 32px", borderRadius: 12, border: "none",
             background: currentSlide === totalSlides - 1 ? `linear-gradient(135deg, ${COLORS.sea}, ${COLORS.seaLight})` : `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`,
             color: currentSlide === totalSlides - 1 ? COLORS.white : COLORS.deepNavy,
             fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
             boxShadow: `0 4px 20px ${currentSlide === totalSlides - 1 ? "rgba(26,107,122,0.4)" : "rgba(201,169,110,0.3)"}`,
           }}>
-            {currentSlide === totalSlides - 1 ? "Launch Live Demo →" : currentSlide === -1 ? "Begin Presentation →" : "Continue →"}
+            {currentSlide === totalSlides - 1 ? "Launch Demo →" : currentSlide === -1 ? "Begin →" : "Continue →"}
           </button>
         </div>
       </div>
 
-      <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", fontSize: 11, color: COLORS.muted + "66", display: "flex", gap: 12, alignItems: "center" }}>
+      <div className="pitch-keyboard-hint" style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", fontSize: 11, color: COLORS.muted + "66", display: "flex", gap: 12, alignItems: "center" }}>
         <span style={{ padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.muted}33`, fontSize: 10 }}>←</span>
         <span style={{ padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.muted}33`, fontSize: 10 }}>→</span>
         <span>or click to navigate</span>
@@ -145,23 +145,23 @@ function PitchDeck({ onFinish }) {
 
 function TitleSlide() {
   return (
-    <div style={{ textAlign: "center", maxWidth: 800, padding: "0 40px" }}>
+    <div className="pitch-slide-content" style={{ textAlign: "center", maxWidth: 800, padding: "0 40px" }}>
       <div className="slide-enter" style={{ width: 80, height: 80, borderRadius: 24, margin: "0 auto 40px", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, fontWeight: 900, color: COLORS.deepNavy, fontFamily: "'Playfair Display', serif", boxShadow: "0 16px 48px rgba(201,169,110,0.3)", animationDelay: "0.2s" }}>Y</div>
       <div className="slide-enter" style={{ animationDelay: "0.4s" }}>
-        <h1 style={{ fontSize: 56, fontWeight: 300, letterSpacing: -2, fontFamily: "'Playfair Display', serif", margin: "0 0 8px 0", background: `linear-gradient(135deg, ${COLORS.white}, ${COLORS.silver})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Yacht Provisions Pro</h1>
+        <h1 className="pitch-title" style={{ fontSize: 56, fontWeight: 300, letterSpacing: -2, fontFamily: "'Playfair Display', serif", margin: "0 0 8px 0", background: `linear-gradient(135deg, ${COLORS.white}, ${COLORS.silver})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Yacht Provisions Pro</h1>
       </div>
       <div className="slide-enter" style={{ animationDelay: "0.6s" }}>
         <div style={{ width: 60, height: 1, margin: "24px auto", background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)` }} />
       </div>
       <div className="slide-enter" style={{ animationDelay: "0.8s" }}>
-        <p style={{ fontSize: 20, fontWeight: 300, color: COLORS.silver, fontFamily: "'Playfair Display', serif", lineHeight: 1.6, maxWidth: 600, margin: "0 auto 32px" }}>The first mobile platform purpose-built for yacht provisioning</p>
+        <p className="pitch-subtitle" style={{ fontSize: 20, fontWeight: 300, color: COLORS.silver, fontFamily: "'Playfair Display', serif", lineHeight: 1.6, maxWidth: 600, margin: "0 auto 32px" }}>The first mobile platform purpose-built for yacht provisioning</p>
       </div>
       <div className="slide-enter" style={{ animationDelay: "1s" }}>
-        <div style={{ display: "inline-flex", gap: 24, padding: "16px 32px", borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, backdropFilter: "blur(20px)" }}>
+        <div className="pitch-stats-bar" style={{ display: "inline-flex", gap: 24, padding: "16px 32px", borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, backdropFilter: "blur(20px)" }}>
           {[{ label: "Market", value: "$60B" }, { label: "FL Opportunity", value: "$500M+" }, { label: "Seed Ask", value: "$1.5M" }].map((item, i) => (
             <div key={i} style={{ textAlign: "center", padding: "0 12px", borderRight: i < 2 ? `1px solid ${COLORS.glassBorder}` : "none" }}>
               <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{item.label}</div>
-              <div style={{ fontSize: 22, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
+              <div className="pitch-stat-value" style={{ fontSize: 22, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
             </div>
           ))}
         </div>
@@ -183,13 +183,13 @@ function ProblemSlide() {
     { title: "WhatsApp & Spreadsheets", desc: "The $60B yacht industry runs on group chats, phone calls, and personal relationships. There is no platform." },
   ];
   return (
-    <div style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+    <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
       <div style={{ textAlign: "center", marginBottom: 48 }}>
         <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
           <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.2)", color: COLORS.danger, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Problem</span>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-          <h2 style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>Provisioning a yacht is <span style={{ color: COLORS.danger, fontStyle: "italic" }}>broken</span></h2>
+          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>Provisioning a yacht is <span style={{ color: COLORS.danger, fontStyle: "italic" }}>broken</span></h2>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
           <p style={{ fontSize: 16, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", maxWidth: 560, margin: "0 auto" }}>A completely manual, fragmented process repeated from scratch for every single charter</p>
@@ -220,14 +220,14 @@ function SolutionSlide() {
     { title: "Guest Profile System", desc: "Dietary restrictions and allergies flagged in real time during ordering." },
   ];
   return (
-    <div style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, alignItems: "center" }}>
+    <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+      <div className="solution-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, alignItems: "center" }}>
         <div>
           <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
             <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Solution</span>
           </div>
           <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-            <h2 style={{ fontSize: 38, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 16px 0", lineHeight: 1.2 }}>One platform for <span style={{ color: COLORS.accent, fontStyle: "italic" }}>everything</span></h2>
+            <h2 className="pitch-h2" style={{ fontSize: 38, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 16px 0", lineHeight: 1.2 }}>One platform for <span style={{ color: COLORS.accent, fontStyle: "italic" }}>everything</span></h2>
           </div>
           <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
             <p style={{ fontSize: 15, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: "0 0 28px 0" }}>Yacht Provisions Pro connects captains, crew, and owners with vetted suppliers for bulk, temperature-controlled, dockside delivery — replacing the chaos with a single coordinated workflow.</p>
@@ -258,13 +258,13 @@ function SolutionSlide() {
 
 function MarketSlide() {
   return (
-    <div style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+    <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
       <div style={{ textAlign: "center", marginBottom: 48 }}>
         <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
           <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(26,107,122,0.15)", border: "1px solid rgba(42,141,156,0.25)", color: COLORS.seaLight, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Market</span>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-          <h2 style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>A <span style={{ color: COLORS.accent, fontStyle: "italic" }}>$60 billion</span> industry with zero technology</h2>
+          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>A <span style={{ color: COLORS.accent, fontStyle: "italic" }}>$60 billion</span> industry with zero technology</h2>
         </div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginBottom: 36 }}>
@@ -277,7 +277,7 @@ function MarketSlide() {
             <div style={{ padding: 28, borderRadius: 18, textAlign: "center", background: `linear-gradient(160deg, ${item.bg} 0%, transparent 100%)`, border: `1px solid ${item.border}`, position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: `radial-gradient(circle, ${item.color}08, transparent)` }} />
               <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 2, fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>{item.label}</div>
-              <div style={{ fontSize: 48, fontWeight: 300, color: item.color, fontFamily: "'Playfair Display', serif", letterSpacing: -2 }}>{item.value}</div>
+              <div className="market-big-value" style={{ fontSize: 48, fontWeight: 300, color: item.color, fontFamily: "'Playfair Display', serif", letterSpacing: -2 }}>{item.value}</div>
               <div style={{ fontSize: 12, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", marginTop: 8, lineHeight: 1.6 }}>{item.desc}</div>
             </div>
           </div>
@@ -312,13 +312,13 @@ function RevenueSlide() {
     { name: "Charter Broker Partnerships", rate: "Wholesale", example: "Fulfillment layer", desc: "Brokers include provisioning in charter contracts. We fulfill.", color: "#60A5FA" },
   ];
   return (
-    <div style={{ maxWidth: 1060, width: "100%", padding: "0 48px" }}>
+    <div className="pitch-slide-content" style={{ maxWidth: 1060, width: "100%", padding: "0 48px" }}>
       <div style={{ textAlign: "center", marginBottom: 40 }}>
         <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
           <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>Revenue Engine</span>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-          <h2 style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 8px 0" }}>Six revenue streams. <span style={{ color: COLORS.accent, fontStyle: "italic" }}>One platform.</span></h2>
+          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 8px 0" }}>Six revenue streams. <span style={{ color: COLORS.accent, fontStyle: "italic" }}>One platform.</span></h2>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
           <p style={{ fontSize: 14, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>Multi-stream model with both transactional and recurring revenue</p>
@@ -339,7 +339,7 @@ function RevenueSlide() {
         ))}
       </div>
       <div className="slide-enter" style={{ animationDelay: "0.85s", marginTop: 20 }}>
-        <div style={{ display: "flex", justifyContent: "center", gap: 36, padding: "16px 28px", borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.accent}08, ${COLORS.sea}08)`, border: `1px solid ${COLORS.glassBorder}` }}>
+        <div className="revenue-summary-bar" style={{ display: "flex", justifyContent: "center", gap: 36, padding: "16px 28px", borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.accent}08, ${COLORS.sea}08)`, border: `1px solid ${COLORS.glassBorder}`, flexWrap: "wrap" }}>
           {[
             { label: "Avg Order Value", value: "$5K–$15K" },
             { label: "Revenue Per Order", value: "$1,050–$2,850" },
@@ -347,7 +347,7 @@ function RevenueSlide() {
             { label: "Seed Round", value: "$750K–$1.5M" },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 18, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
+              <div className="revenue-stat-value" style={{ fontSize: 18, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
               <div style={{ fontSize: 10, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 2, textTransform: "uppercase", letterSpacing: 1 }}>{item.label}</div>
             </div>
           ))}
@@ -455,34 +455,47 @@ function SideNav({ active, setActive }) {
     { id: "suppliers", icon: "◎", label: "Suppliers" },
   ];
   return (
-    <nav style={{ width: 72, minHeight: "100vh", background: COLORS.deepNavy, borderRight: `1px solid ${COLORS.glassBorder}`, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 20, gap: 4, position: "fixed", left: 0, top: 0, zIndex: 100 }}>
-      <div style={{ width: 42, height: 42, borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 900, color: COLORS.deepNavy, marginBottom: 28, fontFamily: "'Playfair Display', serif" }}>Y</div>
-      {items.map((item) => (
-        <button key={item.id} onClick={() => setActive(item.id)} style={{ width: 52, height: 52, borderRadius: 14, border: "none", background: active === item.id ? COLORS.accentDim : "transparent", color: active === item.id ? COLORS.accent : COLORS.silver, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.25s ease", gap: 2, position: "relative" }}>
-          <span style={{ fontSize: 18 }}>{item.icon}</span>
-          <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
-          {active === item.id && <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: 3, height: 24, borderRadius: "0 4px 4px 0", background: COLORS.accent }} />}
-        </button>
-      ))}
-      <div style={{ flex: 1 }} />
-      <div style={{ width: 36, height: 36, borderRadius: "50%", background: COLORS.midNavy, border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: COLORS.accent, fontWeight: 700, marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>JR</div>
-    </nav>
+    <>
+      {/* Desktop sidebar */}
+      <nav className="side-nav-desktop" style={{ width: 72, minHeight: "100vh", background: COLORS.deepNavy, borderRight: `1px solid ${COLORS.glassBorder}`, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 20, gap: 4, position: "fixed", left: 0, top: 0, zIndex: 100 }}>
+        <div style={{ width: 42, height: 42, borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 900, color: COLORS.deepNavy, marginBottom: 28, fontFamily: "'Playfair Display', serif" }}>Y</div>
+        {items.map((item) => (
+          <button key={item.id} onClick={() => setActive(item.id)} style={{ width: 52, height: 52, borderRadius: 14, border: "none", background: active === item.id ? COLORS.accentDim : "transparent", color: active === item.id ? COLORS.accent : COLORS.silver, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.25s ease", gap: 2, position: "relative" }}>
+            <span style={{ fontSize: 18 }}>{item.icon}</span>
+            <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+            {active === item.id && <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: 3, height: 24, borderRadius: "0 4px 4px 0", background: COLORS.accent }} />}
+          </button>
+        ))}
+        <div style={{ flex: 1 }} />
+        <div style={{ width: 36, height: 36, borderRadius: "50%", background: COLORS.midNavy, border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: COLORS.accent, fontWeight: 700, marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>JR</div>
+      </nav>
+      {/* Mobile bottom tab bar */}
+      <nav className="bottom-nav-mobile" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: COLORS.deepNavy, borderTop: `1px solid ${COLORS.glassBorder}`, display: "none", justifyContent: "space-around", alignItems: "center", padding: "6px 0 env(safe-area-inset-bottom, 8px) 0" }}>
+        {items.map((item) => (
+          <button key={item.id} onClick={() => setActive(item.id)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, padding: "8px 0", border: "none", background: "transparent", color: active === item.id ? COLORS.accent : COLORS.silver, cursor: "pointer", position: "relative" }}>
+            <span style={{ fontSize: 18 }}>{item.icon}</span>
+            <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: 0.3, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+            {active === item.id && <span style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 24, height: 3, borderRadius: "0 0 4px 4px", background: COLORS.accent }} />}
+          </button>
+        ))}
+      </nav>
+    </>
   );
 }
 
 function Header({ title, subtitle }) {
   return (
-    <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif", letterSpacing: -0.5, margin: 0 }}>{title}</h1>
-        <p style={{ fontSize: 13, color: COLORS.muted, marginTop: 4, fontFamily: "'DM Sans', sans-serif" }}>{subtitle}</p>
+    <header className="app-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, gap: 16, flexWrap: "wrap" }}>
+      <div style={{ minWidth: 0 }}>
+        <h1 className="header-title" style={{ fontSize: 28, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif", letterSpacing: -0.5, margin: 0 }}>{title}</h1>
+        <p className="header-subtitle" style={{ fontSize: 13, color: COLORS.muted, marginTop: 4, fontFamily: "'DM Sans', sans-serif" }}>{subtitle}</p>
       </div>
-      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <div style={{ position: "relative" }}>
-          <input placeholder="Search vessels, orders..." style={{ width: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
+      <div className="header-actions" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+          <input className="header-search" placeholder="Search vessels, orders..." style={{ width: "100%", maxWidth: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
           <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: COLORS.muted }}>⌕</span>
         </div>
-        <button style={{ width: 40, height: 40, borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 16, cursor: "pointer", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>⚑<span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.danger }} /></button>
+        <button style={{ width: 40, height: 40, minWidth: 40, borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 16, cursor: "pointer", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>⚑<span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.danger }} /></button>
       </div>
     </header>
   );
@@ -517,12 +530,12 @@ function Dashboard({ setActive }) {
             <button onClick={() => setActive("orders")} style={{ fontSize: 12, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>View All →</button>
           </div>
           {ORDERS_RECENT.map((o) => (
-            <div key={o.id} className="hover-row" style={{ display: "grid", gridTemplateColumns: "90px 1fr 80px 100px 100px", alignItems: "center", padding: "14px 12px", borderRadius: 10, gap: 12 }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
-              <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{o.vessel}</span>
-              <span style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{o.items} items</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", textAlign: "right" }}>${o.total.toLocaleString()}</span>
-              <div style={{ display: "flex", justifyContent: "flex-end" }}><StatusBadge status={o.status} /></div>
+            <div key={o.id} className="hover-row dashboard-order-row" style={{ display: "grid", gridTemplateColumns: "90px 1fr 80px 100px 100px", alignItems: "center", padding: "14px 12px", borderRadius: 10, gap: 12 }}>
+              <span className="order-id" style={{ fontSize: 12, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
+              <span className="order-vessel" style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{o.vessel}</span>
+              <span className="order-items" style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{o.items} items</span>
+              <span className="order-total" style={{ fontSize: 13, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", textAlign: "right" }}>${o.total.toLocaleString()}</span>
+              <div className="order-status" style={{ display: "flex", justifyContent: "flex-end" }}><StatusBadge status={o.status} /></div>
             </div>
           ))}
         </div>
@@ -569,8 +582,8 @@ function ProvisionBuilder() {
     <div className="fade-in">
       <Header title="Smart Provision Builder" subtitle="Build your provision order by category — vetted suppliers only" />
       <div className="provision-grid">
-        <div className="card" style={{ padding: 16, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, alignSelf: "start", position: "sticky", top: 20 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "8px 12px", fontFamily: "'DM Sans', sans-serif" }}>Categories</div>
+        <div className="card provision-categories" style={{ padding: 16, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, alignSelf: "start", position: "sticky", top: 20 }}>
+          <div className="categories-label" style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "8px 12px", fontFamily: "'DM Sans', sans-serif" }}>Categories</div>
           {CATEGORIES.map((cat) => {
             const abbrev = cat.label.split(" ").map(word => word[0]).join("").slice(0, 2).toUpperCase();
             return (
@@ -626,14 +639,14 @@ function ProvisionBuilder() {
             })}
           </div>
           {cartCount > 0 && (
-            <div onClick={() => setShowCart(!showCart)} className="hover-lift" style={{ position: "fixed", bottom: 28, right: 28, display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderRadius: 18, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, cursor: "pointer", boxShadow: "0 8px 32px rgba(201,169,110,0.4)", zIndex: 200 }}>
+            <div onClick={() => setShowCart(!showCart)} className="hover-lift cart-fab" style={{ position: "fixed", bottom: 28, right: 28, display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderRadius: 18, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, cursor: "pointer", boxShadow: "0 8px 32px rgba(201,169,110,0.4)", zIndex: 200 }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,0,0,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13 }}>{cartCount}</div>
-              <div><div style={{ fontSize: 14, fontWeight: 700 }}>View Provision Cart</div><div style={{ fontSize: 12, opacity: 0.8 }}>${cartTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div></div>
+              <div><div className="cart-fab-text" style={{ fontSize: 14, fontWeight: 700 }}>View Provision Cart</div><div style={{ fontSize: 12, opacity: 0.8 }}>${cartTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div></div>
               <span style={{ fontSize: 18, marginLeft: 4 }}>→</span>
             </div>
           )}
           {showCart && cartCount > 0 && (
-            <div style={{ position: "fixed", top: 0, right: 0, width: 420, height: "100vh", background: COLORS.deepNavy, borderLeft: `1px solid ${COLORS.glassBorder}`, zIndex: 300, padding: 28, overflowY: "auto", animation: "slideInRight 0.3s ease" }}>
+            <div className="cart-panel" style={{ position: "fixed", top: 0, right: 0, width: 420, height: "100vh", background: COLORS.deepNavy, borderLeft: `1px solid ${COLORS.glassBorder}`, zIndex: 300, padding: 28, overflowY: "auto", animation: "slideInRight 0.3s ease" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                 <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>Provision Cart</h3>
                 <button onClick={() => setShowCart(false)} style={{ background: "none", border: "none", color: COLORS.silver, cursor: "pointer", fontSize: 20 }}>✕</button>
@@ -709,20 +722,36 @@ function OrdersView() {
           <button key={f} onClick={() => setFilter(f)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${filter === f ? COLORS.accent : COLORS.glassBorder}`, background: filter === f ? COLORS.accentDim : "transparent", color: filter === f ? COLORS.accent : COLORS.silver, fontSize: 12, fontWeight: 600, cursor: "pointer", textTransform: "capitalize" }}>{f}</button>
         ))}
       </div>
-      <div className="card" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
+      <div className="card orders-table-desktop" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
+        <div className="table-header-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
           {["Order ID", "Vessel", "Date", "Items", "Total", "Status"].map(h => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2 }}>{h}</span>
           ))}
         </div>
         {filtered.map((o) => (
-          <div key={o.id} className="hover-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
+          <div key={o.id} className="hover-row table-data-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
             <span style={{ fontSize: 13, color: COLORS.white, fontWeight: 500 }}>{o.vessel}</span>
             <span style={{ fontSize: 13, color: COLORS.muted }}>{o.date}</span>
             <span style={{ fontSize: 13, color: COLORS.muted }}>{o.items}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>${o.total.toLocaleString()}</span>
             <StatusBadge status={o.status} />
+          </div>
+        ))}
+      </div>
+      {/* Mobile order cards */}
+      <div className="orders-cards-mobile" style={{ display: "none", flexDirection: "column", gap: 12 }}>
+        {filtered.map((o) => (
+          <div key={o.id} className="card" style={{ padding: 16, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
+              <StatusBadge status={o.status} />
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white, marginBottom: 6 }}>{o.vessel}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 12, color: COLORS.muted }}>{o.date} · {o.items} items</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: COLORS.white }}>${o.total.toLocaleString()}</span>
+            </div>
           </div>
         ))}
       </div>
@@ -751,14 +780,14 @@ function SuppliersView() {
           </div>
         ))}
       </div>
-      <div className="card" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
+      <div className="card suppliers-table-desktop" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
+        <div className="table-header-row" style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
           {["Supplier", "Category", "Rating", "Orders", "Revenue", "Fill Rate", "Tier"].map(h => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2 }}>{h}</span>
           ))}
         </div>
         {suppliers.map((s, i) => (
-          <div key={i} className="hover-row" style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
+          <div key={i} className="hover-row table-data-row" style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
             <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.name}</span>
             <span style={{ fontSize: 12, color: COLORS.muted }}>{s.category}</span>
             <span style={{ fontSize: 13, color: COLORS.accent, fontWeight: 600 }}>★ {s.rating}</span>
@@ -766,6 +795,32 @@ function SuppliersView() {
             <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.white }}>{s.revenue}</span>
             <span style={{ fontSize: 13, color: COLORS.success, fontWeight: 600 }}>{s.fill}</span>
             <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{s.status}</span>
+          </div>
+        ))}
+      </div>
+      {/* Mobile supplier cards */}
+      <div className="suppliers-cards-mobile" style={{ display: "none", flexDirection: "column", gap: 12 }}>
+        {suppliers.map((s, i) => (
+          <div key={i} className="card" style={{ padding: 16, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: COLORS.white }}>{s.name}</span>
+              <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{s.status}</span>
+            </div>
+            <div style={{ fontSize: 12, color: COLORS.muted, marginBottom: 10 }}>{s.category} · <span style={{ color: COLORS.accent }}>★ {s.rating}</span></div>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+              <div style={{ flex: 1, padding: "8px 10px", borderRadius: 8, background: COLORS.deepNavy, textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>Orders</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.orders}</div>
+              </div>
+              <div style={{ flex: 1, padding: "8px 10px", borderRadius: 8, background: COLORS.deepNavy, textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>Revenue</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.revenue}</div>
+              </div>
+              <div style={{ flex: 1, padding: "8px 10px", borderRadius: 8, background: COLORS.deepNavy, textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>Fill Rate</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.success }}>{s.fill}</div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -825,6 +880,105 @@ export default function YachtProvisionsPro() {
         @media (max-width: 960px) {
           .provision-grid { grid-template-columns: 1fr; }
         }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+          /* Nav: hide sidebar, show bottom bar */
+          .side-nav-desktop { display: none !important; }
+          .bottom-nav-mobile { display: flex !important; }
+          .app-main { margin-left: 0 !important; padding: 16px 14px 80px 14px !important; }
+
+          /* Header */
+          .app-header { flex-direction: column !important; gap: 12px !important; margin-bottom: 20px !important; }
+          .header-title { font-size: 22px !important; }
+          .header-subtitle { font-size: 11px !important; }
+          .header-actions { width: 100%; }
+          .header-search { max-width: 100% !important; width: 100% !important; }
+
+          /* Dashboard stats grid: 2 columns */
+          .dashboard-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+
+          /* Dashboard order rows: stacked card style */
+          .dashboard-order-row {
+            grid-template-columns: 1fr 1fr !important;
+            grid-template-rows: auto auto !important;
+            gap: 4px 8px !important;
+            padding: 12px !important;
+            border-bottom: 1px solid rgba(201,169,110,0.1);
+          }
+          .dashboard-order-row .order-id { grid-column: 1; }
+          .dashboard-order-row .order-total { grid-column: 2; text-align: right !important; }
+          .dashboard-order-row .order-vessel { grid-column: 1; font-size: 12px !important; }
+          .dashboard-order-row .order-items { display: none !important; }
+          .dashboard-order-row .order-status { grid-column: 2; justify-content: flex-end; }
+
+          /* Provision Builder */
+          .provision-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+          .provision-categories { position: static !important; }
+          .categories-label { display: none !important; }
+          .provision-categories {
+            display: flex !important;
+            flex-direction: row !important;
+            overflow-x: auto !important;
+            gap: 6px !important;
+            padding: 10px !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .provision-categories button {
+            white-space: nowrap !important;
+            min-width: auto !important;
+            padding: 8px 12px !important;
+            flex-shrink: 0 !important;
+          }
+          .provision-categories button span:nth-child(3) { display: none !important; }
+
+          /* Cart panel full-width */
+          .cart-panel { width: 100% !important; padding: 20px 16px !important; }
+          .cart-fab { bottom: 72px !important; right: 14px !important; left: 14px !important; padding: 14px 18px !important; border-radius: 14px !important; justify-content: center; }
+
+          /* Orders & Suppliers: show cards, hide tables */
+          .orders-table-desktop { display: none !important; }
+          .orders-cards-mobile { display: flex !important; }
+          .suppliers-table-desktop { display: none !important; }
+          .suppliers-cards-mobile { display: flex !important; }
+
+          /* Fleet cards: full width */
+
+          /* ===== PITCH DECK MOBILE ===== */
+          .pitch-slide-content { padding: 0 20px !important; }
+          .pitch-title { font-size: 32px !important; letter-spacing: -1px !important; }
+          .pitch-subtitle { font-size: 16px !important; margin-bottom: 20px !important; }
+          .pitch-h2 { font-size: 24px !important; }
+          .pitch-stats-bar { gap: 14px !important; padding: 14px 18px !important; flex-wrap: wrap !important; }
+          .pitch-stat-value { font-size: 18px !important; }
+          .market-big-value { font-size: 32px !important; }
+          .revenue-stat-value { font-size: 15px !important; }
+          .revenue-summary-bar { gap: 16px !important; padding: 14px 16px !important; }
+
+          /* Pitch bottom nav */
+          .pitch-bottom-nav {
+            flex-direction: column !important;
+            padding: 14px 16px 20px !important;
+            gap: 12px !important;
+            align-items: stretch !important;
+          }
+          .pitch-dots { justify-content: center !important; gap: 4px !important; }
+          .pitch-dot-label { display: none !important; }
+          .pitch-nav-buttons { justify-content: center !important; }
+          .pitch-next-btn { padding: 12px 24px !important; }
+          .pitch-keyboard-hint { display: none !important; }
+
+          /* Solution slide grid */
+          .solution-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+        }
+
+        /* Small phones */
+        @media (max-width: 400px) {
+          .pitch-title { font-size: 26px !important; }
+          .pitch-h2 { font-size: 20px !important; }
+          .market-big-value { font-size: 28px !important; }
+          .header-title { font-size: 20px !important; }
+        }
       `}</style>
 
       {showPitch && <PitchDeck onFinish={() => setShowPitch(false)} />}
@@ -839,7 +993,7 @@ export default function YachtProvisionsPro() {
           animation: "appReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both",
         }}>
           <SideNav active={activePage} setActive={setActivePage} />
-          <main style={{ flex: 1, marginLeft: 72, padding: "28px 32px", minHeight: "100vh" }}>
+          <main className="app-main" style={{ flex: 1, marginLeft: 72, padding: "28px 32px", minHeight: "100vh" }}>
             {renderPage()}
           </main>
         </div>
