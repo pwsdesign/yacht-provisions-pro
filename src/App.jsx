@@ -69,12 +69,14 @@ function PitchDeck({ onFinish }) {
   const slideNames = ["Title", "Problem", "Solution", "Market", "Revenue"];
 
   return (
-    <div style={{
+    <div className="pitch-deck" style={{
       position: "fixed", inset: 0, zIndex: 9999,
       background: `radial-gradient(ellipse at 15% 10%, rgba(26,107,122,0.14) 0%, transparent 55%), radial-gradient(ellipse at 85% 90%, rgba(201,169,110,0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(18,43,74,0.5) 0%, transparent 70%), ${COLORS.navy}`,
       fontFamily: "'DM Sans', sans-serif",
       color: COLORS.white,
       overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
     }}>
       {/* Ambient */}
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}>
@@ -93,9 +95,11 @@ function PitchDeck({ onFinish }) {
         </div>
       </div>
 
-      <div style={{
-        position: "absolute", inset: 0,
+      <div className="pitch-slide-area" style={{
+        flex: 1,
         display: "flex", alignItems: "center", justifyContent: "center",
+        overflow: "hidden",
+        position: "relative",
         opacity: transitioning ? 0 : 1,
         transform: transitioning ? "scale(0.97)" : "scale(1)",
         transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -108,7 +112,7 @@ function PitchDeck({ onFinish }) {
       </div>
 
       {/* Bottom nav */}
-      <div className="pitch-bottom-nav" style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div className="pitch-bottom-nav" style={{ flexShrink: 0, padding: "16px 48px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 10, background: `linear-gradient(to top, ${COLORS.navy} 60%, transparent)` }}>
         <div className="pitch-dots" style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {slideNames.map((name, i) => (
             <button key={i} onClick={() => { if (!transitioning) { setTransitioning(true); setTimeout(() => { setCurrentSlide(i - 1); setTransitioning(false); }, 400); }}}
@@ -945,38 +949,54 @@ export default function YachtProvisionsPro() {
           /* Fleet cards: full width */
 
           /* ===== PITCH DECK MOBILE ===== */
-          .pitch-slide-content { padding: 0 20px !important; }
-          .pitch-title { font-size: 32px !important; letter-spacing: -1px !important; }
-          .pitch-subtitle { font-size: 16px !important; margin-bottom: 20px !important; }
-          .pitch-h2 { font-size: 24px !important; }
-          .pitch-stats-bar { gap: 14px !important; padding: 14px 18px !important; flex-wrap: wrap !important; }
-          .pitch-stat-value { font-size: 18px !important; }
-          .market-big-value { font-size: 32px !important; }
-          .revenue-stat-value { font-size: 15px !important; }
-          .revenue-summary-bar { gap: 16px !important; padding: 14px 16px !important; }
-
-          /* Pitch bottom nav */
-          .pitch-bottom-nav {
-            flex-direction: column !important;
-            padding: 14px 16px 20px !important;
-            gap: 12px !important;
-            align-items: stretch !important;
+          .pitch-deck { overflow: hidden !important; }
+          .pitch-slide-area {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            align-items: flex-start !important;
+            -webkit-overflow-scrolling: touch;
+            padding: 24px 0 16px !important;
           }
-          .pitch-dots { justify-content: center !important; gap: 4px !important; }
+          .pitch-slide-content { padding: 0 16px !important; width: 100% !important; }
+          .pitch-title { font-size: 30px !important; letter-spacing: -1px !important; }
+          .pitch-subtitle { font-size: 15px !important; margin-bottom: 16px !important; }
+          .pitch-h2 { font-size: 22px !important; }
+          .pitch-stats-bar { gap: 12px !important; padding: 12px 14px !important; flex-wrap: wrap !important; }
+          .pitch-stat-value { font-size: 16px !important; }
+          .market-big-value { font-size: 28px !important; }
+          .revenue-stat-value { font-size: 14px !important; }
+          .revenue-summary-bar { gap: 12px !important; padding: 12px 12px !important; display: grid !important; grid-template-columns: 1fr 1fr !important; }
+
+          /* Pitch bottom nav — fixed at bottom */
+          .pitch-bottom-nav {
+            padding: 10px 16px env(safe-area-inset-bottom, 14px) !important;
+            background: ${COLORS.navy} !important;
+            border-top: 1px solid rgba(201,169,110,0.15);
+            gap: 8px !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+          }
+          .pitch-dots { gap: 2px !important; }
+          .pitch-dots button { padding: 4px 6px !important; }
           .pitch-dot-label { display: none !important; }
-          .pitch-nav-buttons { justify-content: center !important; }
-          .pitch-next-btn { padding: 12px 24px !important; }
+          .pitch-nav-buttons { gap: 8px !important; }
+          .pitch-nav-buttons button { padding: 10px 16px !important; font-size: 12px !important; }
           .pitch-keyboard-hint { display: none !important; }
 
           /* Solution slide grid */
-          .solution-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+          .solution-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+          /* Tighter pitch slide cards */
+          .pitch-slide-content .slide-enter { padding: 14px !important; }
+          .pitch-slide-content h4 { font-size: 13px !important; }
+          .pitch-slide-content p { font-size: 11px !important; }
         }
 
         /* Small phones */
         @media (max-width: 400px) {
-          .pitch-title { font-size: 26px !important; }
-          .pitch-h2 { font-size: 20px !important; }
-          .market-big-value { font-size: 28px !important; }
+          .pitch-title { font-size: 24px !important; }
+          .pitch-h2 { font-size: 18px !important; }
+          .market-big-value { font-size: 24px !important; }
           .header-title { font-size: 20px !important; }
         }
       `}</style>
