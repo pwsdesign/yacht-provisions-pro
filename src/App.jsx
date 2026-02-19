@@ -1,0 +1,849 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+
+const COLORS = {
+  navy: "#0B1D33",
+  deepNavy: "#061425",
+  midNavy: "#122B4A",
+  accent: "#C9A96E",
+  accentLight: "#E2CB97",
+  accentDim: "rgba(201,169,110,0.15)",
+  sea: "#1A6B7A",
+  seaLight: "#2A8D9C",
+  white: "#FAFBFC",
+  offWhite: "#F0F1F3",
+  silver: "#B8BCC4",
+  muted: "#6B7280",
+  success: "#34D399",
+  warning: "#FBBF24",
+  danger: "#F87171",
+  glass: "rgba(11,29,51,0.65)",
+  glassBorder: "rgba(201,169,110,0.2)",
+};
+
+/* ================================================================
+   PITCH DECK SLIDES
+   ================================================================ */
+
+function PitchDeck({ onFinish }) {
+  const [currentSlide, setCurrentSlide] = useState(-1);
+  const [transitioning, setTransitioning] = useState(false);
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setEntered(true), 100);
+  }, []);
+
+  const totalSlides = 4;
+
+  const goNext = () => {
+    if (transitioning) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      if (currentSlide >= totalSlides - 1) {
+        onFinish();
+      } else {
+        setCurrentSlide(prev => prev + 1);
+        setTransitioning(false);
+      }
+    }, 400);
+  };
+
+  const goPrev = () => {
+    if (transitioning || currentSlide <= -1) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setCurrentSlide(prev => prev - 1);
+      setTransitioning(false);
+    }, 400);
+  };
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); goNext(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); goPrev(); }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
+  const slideNames = ["Title", "Problem", "Solution", "Market", "Revenue"];
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999,
+      background: `radial-gradient(ellipse at 15% 10%, rgba(26,107,122,0.14) 0%, transparent 55%), radial-gradient(ellipse at 85% 90%, rgba(201,169,110,0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(18,43,74,0.5) 0%, transparent 70%), ${COLORS.navy}`,
+      fontFamily: "'DM Sans', sans-serif",
+      color: COLORS.white,
+      overflow: "hidden",
+    }}>
+      {/* Ambient */}
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}>
+        <div className="float-slow" style={{ position: "absolute", top: "8%", left: "5%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,169,110,0.04) 0%, transparent 70%)" }} />
+        <div className="float-slower" style={{ position: "absolute", bottom: "10%", right: "8%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(26,107,122,0.05) 0%, transparent 70%)" }} />
+        <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, opacity: 0.03 }}>
+          <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke={COLORS.accent} strokeWidth="0.5" /></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 600, height: 600, opacity: 0.015 }}>
+          <svg viewBox="0 0 200 200" fill="none" stroke={COLORS.accent} strokeWidth="0.5">
+            <circle cx="100" cy="100" r="90" /><circle cx="100" cy="100" r="60" /><circle cx="100" cy="100" r="30" />
+            <line x1="100" y1="5" x2="100" y2="195" /><line x1="5" y1="100" x2="195" y2="100" />
+            <line x1="30" y1="30" x2="170" y2="170" /><line x1="170" y1="30" x2="30" y2="170" />
+          </svg>
+        </div>
+      </div>
+
+      <div style={{
+        position: "absolute", inset: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        opacity: transitioning ? 0 : 1,
+        transform: transitioning ? "scale(0.97)" : "scale(1)",
+        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}>
+        {currentSlide === -1 && <TitleSlide />}
+        {currentSlide === 0 && <ProblemSlide />}
+        {currentSlide === 1 && <SolutionSlide />}
+        {currentSlide === 2 && <MarketSlide />}
+        {currentSlide === 3 && <RevenueSlide />}
+      </div>
+
+      {/* Bottom nav */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 48px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {slideNames.map((name, i) => (
+            <button key={i} onClick={() => { if (!transitioning) { setTransitioning(true); setTimeout(() => { setCurrentSlide(i - 1); setTransitioning(false); }, 400); }}}
+              style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 20, background: currentSlide === i - 1 ? COLORS.accentDim : "transparent", border: `1px solid ${currentSlide === i - 1 ? COLORS.accent + "44" : "transparent"}`, cursor: "pointer", transition: "all 0.3s" }}>
+              <div style={{ width: currentSlide === i - 1 ? 24 : 8, height: 8, borderRadius: 4, background: currentSlide >= i - 1 ? COLORS.accent : COLORS.muted + "44", transition: "all 0.4s ease" }} />
+              {currentSlide === i - 1 && <span style={{ fontSize: 11, color: COLORS.accent, fontWeight: 600, letterSpacing: 0.5 }}>{name}</span>}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 12 }}>
+          {currentSlide > -1 && (
+            <button onClick={goPrev} className="hover-lift" style={{ padding: "12px 24px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", backdropFilter: "blur(10px)" }}>← Back</button>
+          )}
+          <button onClick={goNext} className="hover-lift" style={{
+            padding: "12px 32px", borderRadius: 12, border: "none",
+            background: currentSlide === totalSlides - 1 ? `linear-gradient(135deg, ${COLORS.sea}, ${COLORS.seaLight})` : `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`,
+            color: currentSlide === totalSlides - 1 ? COLORS.white : COLORS.deepNavy,
+            fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+            boxShadow: `0 4px 20px ${currentSlide === totalSlides - 1 ? "rgba(26,107,122,0.4)" : "rgba(201,169,110,0.3)"}`,
+          }}>
+            {currentSlide === totalSlides - 1 ? "Launch Live Demo →" : currentSlide === -1 ? "Begin Presentation →" : "Continue →"}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", fontSize: 11, color: COLORS.muted + "66", display: "flex", gap: 12, alignItems: "center" }}>
+        <span style={{ padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.muted}33`, fontSize: 10 }}>←</span>
+        <span style={{ padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.muted}33`, fontSize: 10 }}>→</span>
+        <span>or click to navigate</span>
+      </div>
+    </div>
+  );
+}
+
+function TitleSlide() {
+  return (
+    <div style={{ textAlign: "center", maxWidth: 800, padding: "0 40px" }}>
+      <div className="slide-enter" style={{ width: 80, height: 80, borderRadius: 24, margin: "0 auto 40px", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, fontWeight: 900, color: COLORS.deepNavy, fontFamily: "'Playfair Display', serif", boxShadow: "0 16px 48px rgba(201,169,110,0.3)", animationDelay: "0.2s" }}>Y</div>
+      <div className="slide-enter" style={{ animationDelay: "0.4s" }}>
+        <h1 style={{ fontSize: 56, fontWeight: 300, letterSpacing: -2, fontFamily: "'Playfair Display', serif", margin: "0 0 8px 0", background: `linear-gradient(135deg, ${COLORS.white}, ${COLORS.silver})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Yacht Provisions Pro</h1>
+      </div>
+      <div className="slide-enter" style={{ animationDelay: "0.6s" }}>
+        <div style={{ width: 60, height: 1, margin: "24px auto", background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)` }} />
+      </div>
+      <div className="slide-enter" style={{ animationDelay: "0.8s" }}>
+        <p style={{ fontSize: 20, fontWeight: 300, color: COLORS.silver, fontFamily: "'Playfair Display', serif", lineHeight: 1.6, maxWidth: 600, margin: "0 auto 32px" }}>The first mobile platform purpose-built for yacht provisioning</p>
+      </div>
+      <div className="slide-enter" style={{ animationDelay: "1s" }}>
+        <div style={{ display: "inline-flex", gap: 24, padding: "16px 32px", borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, backdropFilter: "blur(20px)" }}>
+          {[{ label: "Market", value: "$60B" }, { label: "FL Opportunity", value: "$500M+" }, { label: "Seed Ask", value: "$1.5M" }].map((item, i) => (
+            <div key={i} style={{ textAlign: "center", padding: "0 12px", borderRight: i < 2 ? `1px solid ${COLORS.glassBorder}` : "none" }}>
+              <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{item.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="slide-enter" style={{ animationDelay: "1.2s", marginTop: 48 }}>
+        <p style={{ fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontStyle: "italic" }}>Shopify + DoorDash — for the yachting industry</p>
+      </div>
+    </div>
+  );
+}
+
+function ProblemSlide() {
+  const painPoints = [
+    { title: "6–10 Vendor Calls Per Trip", desc: "Captains manually contact separate suppliers for every category — seafood, produce, spirits, cleaning — each time." },
+    { title: "Uncoordinated Deliveries", desc: "Multiple vendors delivering at different times. No cold-chain guarantees. Missed windows delay departures." },
+    { title: "Manual Customs Manifests", desc: "International departures require CBP-compliant paperwork — done by hand from scattered invoices every trip." },
+    { title: "No Consolidated Billing", desc: "Every vendor invoiced separately. No spend visibility. Fleet managers reconcile dozens of invoices per vessel." },
+    { title: "Zero Reusability", desc: "No saved templates. No guest profiles. The entire process starts from scratch for every charter, every week." },
+    { title: "WhatsApp & Spreadsheets", desc: "The $60B yacht industry runs on group chats, phone calls, and personal relationships. There is no platform." },
+  ];
+  return (
+    <div style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.2)", color: COLORS.danger, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Problem</span>
+        </div>
+        <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
+          <h2 style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>Provisioning a yacht is <span style={{ color: COLORS.danger, fontStyle: "italic" }}>broken</span></h2>
+        </div>
+        <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
+          <p style={{ fontSize: 16, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", maxWidth: 560, margin: "0 auto" }}>A completely manual, fragmented process repeated from scratch for every single charter</p>
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+        {painPoints.map((p, i) => (
+          <div key={i} className="slide-enter hover-lift" style={{ animationDelay: `${0.4 + i * 0.08}s`, padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, backdropFilter: "blur(10px)", transition: "all 0.3s" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: COLORS.accentDim, color: COLORS.accent, fontWeight: 700, fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif" }}>{String(i + 1).padStart(2, "0")}</div>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", margin: 0 }}>{p.title}</h4>
+            </div>
+            <p style={{ fontSize: 12, color: COLORS.muted, lineHeight: 1.6, fontFamily: "'DM Sans', sans-serif", margin: 0 }}>{p.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SolutionSlide() {
+  const features = [
+    { title: "Smart Provision Builder", desc: "One unified catalog of vetted marine-grade suppliers. Build complete orders by category." },
+    { title: "Departure-Linked Scheduling", desc: "Input your departure. The app calculates delivery windows and cold-chain timing." },
+    { title: "Provision Templates", desc: "Save and reorder past setups with one tap. Your weekly Bahamas run? Two taps." },
+    { title: "Fleet Dashboard", desc: "All vessels, orders, spend, and delivery status in one centralized control panel." },
+    { title: "Customs Manifest Generator", desc: "Auto-generate CBP-compliant manifests from order data. Hours of paperwork eliminated." },
+    { title: "Guest Profile System", desc: "Dietary restrictions and allergies flagged in real time during ordering." },
+  ];
+  return (
+    <div style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, alignItems: "center" }}>
+        <div>
+          <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
+            <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Solution</span>
+          </div>
+          <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
+            <h2 style={{ fontSize: 38, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 16px 0", lineHeight: 1.2 }}>One platform for <span style={{ color: COLORS.accent, fontStyle: "italic" }}>everything</span></h2>
+          </div>
+          <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
+            <p style={{ fontSize: 15, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: "0 0 28px 0" }}>Yacht Provisions Pro connects captains, crew, and owners with vetted suppliers for bulk, temperature-controlled, dockside delivery — replacing the chaos with a single coordinated workflow.</p>
+          </div>
+          <div className="slide-enter" style={{ animationDelay: "0.4s" }}>
+            <div style={{ display: "flex", gap: 16, padding: "16px 20px", borderRadius: 14, background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.15)" }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: COLORS.success, fontSize: 12 }}>ROI</div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.success, fontFamily: "'DM Sans', sans-serif" }}>4+ hours saved per provision run</div>
+                <div style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>From scattered calls to a single, coordinated dockside delivery</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+          {features.map((f, i) => (
+            <div key={i} className="slide-enter" style={{ animationDelay: `${0.3 + i * 0.08}s`, padding: 18, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, marginBottom: 10, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: COLORS.accent, fontWeight: 800 }}>{f.title.slice(0, 1)}</div>
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", margin: "0 0 4px 0" }}>{f.title}</h4>
+              <p style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.5, fontFamily: "'DM Sans', sans-serif", margin: 0 }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MarketSlide() {
+  return (
+    <div style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(26,107,122,0.15)", border: "1px solid rgba(42,141,156,0.25)", color: COLORS.seaLight, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Market</span>
+        </div>
+        <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
+          <h2 style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>A <span style={{ color: COLORS.accent, fontStyle: "italic" }}>$60 billion</span> industry with zero technology</h2>
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginBottom: 36 }}>
+        {[
+          { label: "TAM — Global", value: "$60B", desc: "Charter + private vessels + superyacht management + marine hospitality", color: COLORS.accent, bg: `rgba(201,169,110,0.08)`, border: `${COLORS.accent}22` },
+          { label: "SAM — South Florida", value: "$500M+", desc: "100,000+ registered vessels · Ft. Lauderdale, Miami, Palm Beach, the Keys", color: COLORS.seaLight, bg: "rgba(26,107,122,0.1)", border: `${COLORS.sea}33` },
+          { label: "SOM — Year 1–3", value: "$10–15M", desc: "2–3% capture rate → $1.5–3M net revenue at 15–20% take rate", color: COLORS.success, bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
+        ].map((item, i) => (
+          <div key={i} className="slide-enter" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+            <div style={{ padding: 28, borderRadius: 18, textAlign: "center", background: `linear-gradient(160deg, ${item.bg} 0%, transparent 100%)`, border: `1px solid ${item.border}`, position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: `radial-gradient(circle, ${item.color}08, transparent)` }} />
+              <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 2, fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>{item.label}</div>
+              <div style={{ fontSize: 48, fontWeight: 300, color: item.color, fontFamily: "'Playfair Display', serif", letterSpacing: -2 }}>{item.value}</div>
+              <div style={{ fontSize: 12, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", marginTop: 8, lineHeight: 1.6 }}>{item.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="slide-enter" style={{ animationDelay: "0.75s" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, padding: 20, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+          {[
+            { val: "#1", label: "Ft. Lauderdale: largest in-water boat show in the world" },
+            { val: "100K+", label: "Registered recreational vessels in South Florida alone" },
+            { val: "0", label: "Purpose-built tech platforms for yacht provisioning" },
+            { val: "18–24mo", label: "Estimated time to break-even at $4–5M annual GMV" },
+          ].map((item, i) => (
+            <div key={i} style={{ textAlign: "center", padding: "4px 8px" }}>
+              <div style={{ fontSize: 22, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif", marginBottom: 4 }}>{item.val}</div>
+              <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RevenueSlide() {
+  const streams = [
+    { name: "Transaction Commission", rate: "15–22%", example: "$1,440–$3,600 per order", desc: "Core engine. Markup on all goods ordered through the platform.", color: COLORS.accent },
+    { name: "Delivery Coordination Fee", rate: "$75–$200", example: "Per delivery", desc: "Flat fee covering dockside agent and cold-chain handling.", color: COLORS.seaLight },
+    { name: "Fleet Account SaaS", rate: "$300–$800/mo", example: "80%+ margins", desc: "Recurring revenue from management companies. Dashboard, billing, priority.", color: COLORS.success },
+    { name: "Supplier Listing Fees", rate: "$200–$500/mo", example: "Per vendor", desc: "Premium placement in catalog for access to high-spend captain demographic.", color: COLORS.warning },
+    { name: "White-Glove Concierge", rate: "$500–$1,500", example: "Per provision event", desc: "Human agent handles everything for superyacht and UHNW clients.", color: "#C084FC" },
+    { name: "Charter Broker Partnerships", rate: "Wholesale", example: "Fulfillment layer", desc: "Brokers include provisioning in charter contracts. We fulfill.", color: "#60A5FA" },
+  ];
+  return (
+    <div style={{ maxWidth: 1060, width: "100%", padding: "0 48px" }}>
+      <div style={{ textAlign: "center", marginBottom: 40 }}>
+        <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>Revenue Engine</span>
+        </div>
+        <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
+          <h2 style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 8px 0" }}>Six revenue streams. <span style={{ color: COLORS.accent, fontStyle: "italic" }}>One platform.</span></h2>
+        </div>
+        <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
+          <p style={{ fontSize: 14, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>Multi-stream model with both transactional and recurring revenue</p>
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
+        {streams.map((s, i) => (
+          <div key={i} className="slide-enter hover-lift" style={{ animationDelay: `${0.35 + i * 0.07}s`, padding: 20, borderRadius: 16, background: COLORS.glass, border: `1px solid ${s.color}22`, position: "relative", overflow: "hidden", transition: "all 0.3s" }}>
+            <div style={{ position: "absolute", top: -30, right: -30, width: 80, height: 80, borderRadius: "50%", background: `radial-gradient(circle, ${s.color}08, transparent)` }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: `${s.color}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: s.color }}>{`R${i + 1}`}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{s.name}</div>
+            </div>
+            <div style={{ fontSize: 24, fontWeight: 300, color: s.color, fontFamily: "'Playfair Display', serif", marginBottom: 2 }}>{s.rate}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>{s.example}</div>
+            <div style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.5, fontFamily: "'DM Sans', sans-serif" }}>{s.desc}</div>
+          </div>
+        ))}
+      </div>
+      <div className="slide-enter" style={{ animationDelay: "0.85s", marginTop: 20 }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 36, padding: "16px 28px", borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.accent}08, ${COLORS.sea}08)`, border: `1px solid ${COLORS.glassBorder}` }}>
+          {[
+            { label: "Avg Order Value", value: "$5K–$15K" },
+            { label: "Revenue Per Order", value: "$1,050–$2,850" },
+            { label: "100 Captains Year 1", value: "$2–5M GMV" },
+            { label: "Seed Round", value: "$750K–$1.5M" },
+          ].map((item, i) => (
+            <div key={i} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
+              <div style={{ fontSize: 10, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 2, textTransform: "uppercase", letterSpacing: 1 }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ================================================================
+   APP COMPONENTS
+   ================================================================ */
+
+const CATEGORIES = [
+  { id: "proteins", label: "Proteins", count: 24 },
+  { id: "seafood", label: "Seafood", count: 31 },
+  { id: "produce", label: "Produce", count: 42 },
+  { id: "dairy", label: "Dairy & Eggs", count: 18 },
+  { id: "bakery", label: "Bakery", count: 15 },
+  { id: "beverages", label: "Beverages", count: 36 },
+  { id: "spirits", label: "Spirits & Wine", count: 28 },
+  { id: "dry", label: "Dry Goods", count: 22 },
+  { id: "cleaning", label: "Cleaning", count: 14 },
+  { id: "specialty", label: "Specialty", count: 19 },
+];
+
+const PRODUCTS = {
+  seafood: [
+    { id: 1, name: "Maine Lobster Tails", unit: "per lb", price: 42.00, supplier: "Ocean Prime Seafood", rating: 4.9, tag: "Premium" },
+    { id: 2, name: "Alaskan King Crab Legs", unit: "per lb", price: 68.00, supplier: "Ocean Prime Seafood", rating: 4.8, tag: "Seasonal" },
+    { id: 3, name: "Sashimi-Grade Ahi Tuna", unit: "per lb", price: 38.50, supplier: "Blue Marlin Direct", rating: 5.0, tag: "Chef's Pick" },
+    { id: 4, name: "Jumbo Gulf Shrimp (U-10)", unit: "per lb", price: 24.00, supplier: "Gulf Coast Provisions", rating: 4.7 },
+    { id: 5, name: "Fresh Oysters — Wellfleet", unit: "per dozen", price: 36.00, supplier: "Shell & Tide Co.", rating: 4.9, tag: "Live" },
+    { id: 6, name: "Branzino — Whole, Cleaned", unit: "per fish", price: 28.00, supplier: "Mediterranean Catch", rating: 4.6 },
+  ],
+  beverages: [
+    { id: 7, name: "Dom Pérignon 2013", unit: "per bottle", price: 285.00, supplier: "Prestige Wine & Spirits", rating: 5.0, tag: "Premium" },
+    { id: 8, name: "Whispering Angel Rosé", unit: "per case (6)", price: 168.00, supplier: "Prestige Wine & Spirits", rating: 4.8 },
+    { id: 9, name: "San Pellegrino Sparkling", unit: "per case (24)", price: 38.00, supplier: "Euro Beverage Dist.", rating: 4.7 },
+    { id: 10, name: "Cold-Pressed Juice Assortment", unit: "per set (12)", price: 72.00, supplier: "Sunrise Juicery", rating: 4.9, tag: "Organic" },
+  ],
+  proteins: [
+    { id: 11, name: "Japanese A5 Wagyu Strip", unit: "per lb", price: 185.00, supplier: "Kobe & Co.", rating: 5.0, tag: "Ultra Premium" },
+    { id: 12, name: "Berkshire Pork Chops", unit: "per lb", price: 22.00, supplier: "Heritage Meats FL", rating: 4.8 },
+    { id: 13, name: "Free-Range Chicken Breast", unit: "per lb", price: 12.50, supplier: "Heritage Meats FL", rating: 4.6 },
+  ],
+};
+
+const FLEET = [
+  { name: "M/Y Serenity", length: "82ft", type: "Sunseeker", status: "Departing", departure: "Tomorrow 6:00 AM", captain: "Capt. James Reed", orderStatus: "In Progress", orderTotal: 14280, progress: 72, location: "Fort Lauderdale" },
+  { name: "M/Y Azure Dream", length: "110ft", type: "Azimut", status: "Provisioned", departure: "Feb 21, 8:00 AM", captain: "Capt. Elena Vasquez", orderStatus: "Complete", orderTotal: 28450, progress: 100, location: "Miami Beach Marina" },
+  { name: "S/Y Wind Dancer", length: "65ft", type: "Oyster", status: "Pending", departure: "Feb 22, 10:00 AM", captain: "Capt. Tom Bridges", orderStatus: "Awaiting Approval", orderTotal: 8920, progress: 35, location: "Palm Beach" },
+  { name: "M/Y Poseidon's Crown", length: "140ft", type: "Lürssen", status: "Docked", departure: "Feb 25, 12:00 PM", captain: "Capt. Marcus Hall", orderStatus: "Not Started", orderTotal: 0, progress: 0, location: "Bahia Mar" },
+];
+
+const ORDERS_RECENT = [
+  { id: "YPP-2847", vessel: "M/Y Serenity", date: "Feb 18", total: 14280, items: 47, status: "delivering" },
+  { id: "YPP-2846", vessel: "M/Y Azure Dream", date: "Feb 17", total: 28450, items: 83, status: "complete" },
+  { id: "YPP-2845", vessel: "S/Y Wind Dancer", date: "Feb 16", total: 8920, items: 31, status: "pending" },
+  { id: "YPP-2844", vessel: "M/Y Bella Vita", date: "Feb 15", total: 11340, items: 56, status: "complete" },
+  { id: "YPP-2843", vessel: "M/Y Oceanus", date: "Feb 14", total: 19870, items: 64, status: "complete" },
+];
+
+function AnimatedNumber({ value, prefix = "" }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    const duration = 1200;
+    const startTime = performance.now();
+    function tick(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      setDisplay(Math.floor((1 - Math.pow(1 - progress, 3)) * value));
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }, [value]);
+  return <>{prefix}{display.toLocaleString()}</>;
+}
+
+function StatusBadge({ status }) {
+  const config = {
+    delivering: { bg: "rgba(52,211,153,0.15)", color: COLORS.success, label: "Delivering", dot: true },
+    complete: { bg: "rgba(201,169,110,0.15)", color: COLORS.accent, label: "Complete" },
+    pending: { bg: "rgba(251,191,36,0.15)", color: COLORS.warning, label: "Pending" },
+    "In Progress": { bg: "rgba(52,211,153,0.15)", color: COLORS.success, label: "In Progress", dot: true },
+    Complete: { bg: "rgba(201,169,110,0.15)", color: COLORS.accent, label: "Complete" },
+    "Awaiting Approval": { bg: "rgba(251,191,36,0.15)", color: COLORS.warning, label: "Awaiting Approval" },
+    "Not Started": { bg: "rgba(107,114,128,0.15)", color: COLORS.silver, label: "Not Started" },
+  };
+  const c = config[status] || config.pending;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 12px", borderRadius: 20, background: c.bg, color: c.color, fontSize: 12, fontWeight: 600, letterSpacing: 0.3 }}>
+      {c.dot && <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.color, animation: "pulse 2s infinite" }} />}
+      {c.label}
+    </span>
+  );
+}
+
+function SideNav({ active, setActive }) {
+  const items = [
+    { id: "dashboard", icon: "⬡", label: "Bridge" },
+    { id: "provision", icon: "◈", label: "Provision" },
+    { id: "fleet", icon: "⎔", label: "Fleet" },
+    { id: "orders", icon: "☰", label: "Orders" },
+    { id: "suppliers", icon: "◎", label: "Suppliers" },
+  ];
+  return (
+    <nav style={{ width: 72, minHeight: "100vh", background: COLORS.deepNavy, borderRight: `1px solid ${COLORS.glassBorder}`, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 20, gap: 4, position: "fixed", left: 0, top: 0, zIndex: 100 }}>
+      <div style={{ width: 42, height: 42, borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 900, color: COLORS.deepNavy, marginBottom: 28, fontFamily: "'Playfair Display', serif" }}>Y</div>
+      {items.map((item) => (
+        <button key={item.id} onClick={() => setActive(item.id)} style={{ width: 52, height: 52, borderRadius: 14, border: "none", background: active === item.id ? COLORS.accentDim : "transparent", color: active === item.id ? COLORS.accent : COLORS.silver, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.25s ease", gap: 2, position: "relative" }}>
+          <span style={{ fontSize: 18 }}>{item.icon}</span>
+          <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: 0.5, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+          {active === item.id && <span style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)", width: 3, height: 24, borderRadius: "0 4px 4px 0", background: COLORS.accent }} />}
+        </button>
+      ))}
+      <div style={{ flex: 1 }} />
+      <div style={{ width: 36, height: 36, borderRadius: "50%", background: COLORS.midNavy, border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: COLORS.accent, fontWeight: 700, marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>JR</div>
+    </nav>
+  );
+}
+
+function Header({ title, subtitle }) {
+  return (
+    <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
+      <div>
+        <h1 style={{ fontSize: 28, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif", letterSpacing: -0.5, margin: 0 }}>{title}</h1>
+        <p style={{ fontSize: 13, color: COLORS.muted, marginTop: 4, fontFamily: "'DM Sans', sans-serif" }}>{subtitle}</p>
+      </div>
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={{ position: "relative" }}>
+          <input placeholder="Search vessels, orders..." style={{ width: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
+          <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: COLORS.muted }}>⌕</span>
+        </div>
+        <button style={{ width: 40, height: 40, borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 16, cursor: "pointer", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>⚑<span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.danger }} /></button>
+      </div>
+    </header>
+  );
+}
+
+function Dashboard({ setActive }) {
+  const stats = [
+    { label: "Active Orders", value: 12, change: "+3 today", icon: "◈" },
+    { label: "Monthly GMV", value: 284500, prefix: "$", change: "+18% vs Jan", icon: "◆" },
+    { label: "Fleet Accounts", value: 8, change: "+2 this month", icon: "⎔" },
+    { label: "Suppliers Online", value: 47, change: "98% fill rate", icon: "◎" },
+  ];
+  return (
+    <div className="fade-in">
+      <Header title="Bridge Overview" subtitle="Thursday, February 19, 2026 — Fort Lauderdale, FL" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 28 }}>
+        {stats.map((s, i) => (
+          <div key={i} className="card hover-lift" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, animationDelay: `${i * 0.08}s` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2, fontFamily: "'DM Sans', sans-serif" }}>{s.label}</span>
+              <span style={{ fontSize: 18, color: COLORS.accent, opacity: 0.6 }}>{s.icon}</span>
+            </div>
+            <div style={{ fontSize: 32, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif", letterSpacing: -1 }}><AnimatedNumber value={s.value} prefix={s.prefix || ""} /></div>
+            <div style={{ fontSize: 12, color: COLORS.seaLight, marginTop: 6, fontFamily: "'DM Sans', sans-serif" }}>{s.change}</div>
+          </div>
+        ))}
+      </div>
+      <div className="dashboard-grid">
+        <div className="card" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>Recent Orders</h3>
+            <button onClick={() => setActive("orders")} style={{ fontSize: 12, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>View All →</button>
+          </div>
+          {ORDERS_RECENT.map((o) => (
+            <div key={o.id} className="hover-row" style={{ display: "grid", gridTemplateColumns: "90px 1fr 80px 100px 100px", alignItems: "center", padding: "14px 12px", borderRadius: 10, gap: 12 }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
+              <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{o.vessel}</span>
+              <span style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{o.items} items</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", textAlign: "right" }}>${o.total.toLocaleString()}</span>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}><StatusBadge status={o.status} /></div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div className="card" style={{ padding: 24, borderRadius: 16, background: `linear-gradient(135deg, ${COLORS.accent}18, ${COLORS.sea}18)`, border: `1px solid ${COLORS.glassBorder}` }}>
+            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>Quick Actions</h3>
+            {[{ label: "New Provision Order", icon: "＋", action: () => setActive("provision") }, { label: "Reorder Last Template", icon: "↻" }, { label: "Generate Customs Manifest", icon: "☷" }].map((a, i) => (
+              <button key={i} onClick={a.action} className="hover-lift" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, textAlign: "left", width: "100%", marginBottom: 10 }}>
+                <span style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", color: COLORS.accent, fontSize: 16 }}>{a.icon}</span>{a.label}
+              </button>
+            ))}
+          </div>
+          <div className="card" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, flex: 1 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>Upcoming Departures</h3>
+            {FLEET.filter(f => f.departure).slice(0, 3).map((f, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: COLORS.accent }}>VSL</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{f.name}</div>
+                  <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{f.departure}</div>
+                </div>
+                <StatusBadge status={f.orderStatus} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProvisionBuilder() {
+  const [selectedCat, setSelectedCat] = useState("seafood");
+  const [cart, setCart] = useState({});
+  const [showCart, setShowCart] = useState(false);
+  const products = PRODUCTS[selectedCat] || [];
+  const cartItems = Object.entries(cart);
+  const cartTotal = cartItems.reduce((sum, [, { price, qty }]) => sum + price * qty, 0);
+  const cartCount = cartItems.reduce((sum, [, { qty }]) => sum + qty, 0);
+  const addToCart = (p) => setCart(prev => ({ ...prev, [p.id]: { ...p, qty: (prev[p.id]?.qty || 0) + 1 } }));
+  const updateQty = (id, d) => setCart(prev => { const item = prev[id]; if (!item) return prev; const n = item.qty + d; if (n <= 0) { const { [id]: _, ...r } = prev; return r; } return { ...prev, [id]: { ...item, qty: n } }; });
+
+  return (
+    <div className="fade-in">
+      <Header title="Smart Provision Builder" subtitle="Build your provision order by category — vetted suppliers only" />
+      <div className="provision-grid">
+        <div className="card" style={{ padding: 16, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, alignSelf: "start", position: "sticky", top: 20 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "8px 12px", fontFamily: "'DM Sans', sans-serif" }}>Categories</div>
+          {CATEGORIES.map((cat) => {
+            const abbrev = cat.label.split(" ").map(word => word[0]).join("").slice(0, 2).toUpperCase();
+            return (
+              <button key={cat.id} onClick={() => setSelectedCat(cat.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, border: "none", background: selectedCat === cat.id ? COLORS.accentDim : "transparent", color: selectedCat === cat.id ? COLORS.accent : COLORS.silver, cursor: "pointer", textAlign: "left", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: selectedCat === cat.id ? 600 : 400 }}>
+                <span style={{ width: 28, height: 28, borderRadius: 8, background: COLORS.accentDim, color: COLORS.accent, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 11 }}>{abbrev}</span><span style={{ flex: 1 }}>{cat.label}</span><span style={{ fontSize: 11, color: COLORS.muted }}>{cat.count}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div>
+          <div className="card" style={{ display: "flex", alignItems: "center", gap: 20, padding: "16px 20px", borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.accent}10, ${COLORS.sea}10)`, border: `1px solid ${COLORS.glassBorder}`, marginBottom: 20, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Vessel</span>
+              <span style={{ padding: "6px 14px", borderRadius: 8, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>M/Y Serenity — 82ft Sunseeker</span>
+            </div>
+            <div style={{ width: 1, height: 24, background: COLORS.glassBorder }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Departure</span>
+              <span style={{ padding: "6px 14px", borderRadius: 8, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.accent, fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>Tomorrow — 6:00 AM</span>
+            </div>
+            <div style={{ flex: 1 }} />
+            <span style={{ fontSize: 11, color: COLORS.success, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>● Delivery window confirmed: Today 2:00–4:00 PM</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)", marginBottom: 20 }}>
+            <span style={{ fontSize: 16, fontWeight: 800, color: COLORS.warning }}>!</span>
+            <span style={{ fontSize: 12, color: COLORS.warning, fontFamily: "'DM Sans', sans-serif" }}><strong>Guest Profile Alert:</strong> Guest #2 (Sarah Mitchell) — Shellfish allergy, Gluten-free.</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+            {products.map((p, i) => {
+              const inCart = cart[p.id];
+              return (
+                <div key={p.id} className="card hover-lift" style={{ padding: 20, borderRadius: 14, background: COLORS.glass, border: `1px solid ${inCart ? COLORS.accent + "44" : COLORS.glassBorder}`, animationDelay: `${i * 0.05}s` }}>
+                  {p.tag && <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 6, background: p.tag.includes("Premium") ? COLORS.accentDim : p.tag === "Chef's Pick" ? "rgba(26,107,122,0.2)" : "rgba(107,114,128,0.15)", color: p.tag.includes("Premium") ? COLORS.accent : p.tag === "Chef's Pick" ? COLORS.seaLight : COLORS.silver, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, marginBottom: 10, fontFamily: "'DM Sans', sans-serif", textTransform: "uppercase" }}>{p.tag}</span>}
+                  <h4 style={{ fontSize: 15, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", margin: "0 0 6px 0" }}>{p.name}</h4>
+                  <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>{p.supplier} · {"★".repeat(Math.floor(p.rating))} {p.rating}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    <div>
+                      <div style={{ fontSize: 22, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>${p.price.toFixed(2)}</div>
+                      <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{p.unit}</div>
+                    </div>
+                    {inCart ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <button onClick={() => updateQty(p.id, -1)} style={{ width: 28, height: 28, borderRadius: 8, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: COLORS.accent, minWidth: 20, textAlign: "center" }}>{inCart.qty}</span>
+                        <button onClick={() => updateQty(p.id, 1)} style={{ width: 28, height: 28, borderRadius: 8, border: `1px solid ${COLORS.accent}44`, background: COLORS.accentDim, color: COLORS.accent, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => addToCart(p)} className="hover-lift" style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Add</button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {cartCount > 0 && (
+            <div onClick={() => setShowCart(!showCart)} className="hover-lift" style={{ position: "fixed", bottom: 28, right: 28, display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderRadius: 18, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, cursor: "pointer", boxShadow: "0 8px 32px rgba(201,169,110,0.4)", zIndex: 200 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,0,0,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13 }}>{cartCount}</div>
+              <div><div style={{ fontSize: 14, fontWeight: 700 }}>View Provision Cart</div><div style={{ fontSize: 12, opacity: 0.8 }}>${cartTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div></div>
+              <span style={{ fontSize: 18, marginLeft: 4 }}>→</span>
+            </div>
+          )}
+          {showCart && cartCount > 0 && (
+            <div style={{ position: "fixed", top: 0, right: 0, width: 420, height: "100vh", background: COLORS.deepNavy, borderLeft: `1px solid ${COLORS.glassBorder}`, zIndex: 300, padding: 28, overflowY: "auto", animation: "slideInRight 0.3s ease" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>Provision Cart</h3>
+                <button onClick={() => setShowCart(false)} style={{ background: "none", border: "none", color: COLORS.silver, cursor: "pointer", fontSize: 20 }}>✕</button>
+              </div>
+              {cartItems.map(([id, item]) => (
+                <div key={id} style={{ display: "flex", alignItems: "center", gap: 12, padding: 14, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, marginBottom: 12 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.white }}>{item.name}</div>
+                    <div style={{ fontSize: 11, color: COLORS.muted }}>${item.price.toFixed(2)} × {item.qty}</div>
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.accent }}>${(item.price * item.qty).toFixed(2)}</div>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <button onClick={() => updateQty(Number(id), -1)} style={{ width: 24, height: 24, borderRadius: 6, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.silver, cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                    <button onClick={() => updateQty(Number(id), 1)} style={{ width: 24, height: 24, borderRadius: 6, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.silver, cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+                  </div>
+                </div>
+              ))}
+              <div style={{ marginTop: 24, padding: "20px 0", borderTop: `1px solid ${COLORS.glassBorder}` }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>Subtotal</span><span style={{ fontSize: 13, color: COLORS.white }}>${cartTotal.toFixed(2)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>Coordination Fee</span><span style={{ fontSize: 13, color: COLORS.white }}>$150.00</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.white }}>Total</span><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.accent }}>${(cartTotal + 150).toFixed(2)}</span></div>
+                <button className="hover-lift" style={{ width: "100%", padding: "14px 0", borderRadius: 14, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Schedule Dockside Delivery →</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FleetView() {
+  return (
+    <div className="fade-in">
+      <Header title="Fleet Dashboard" subtitle="Manage all vessels and their provisioning status" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+        {FLEET.map((v, i) => (
+          <div key={i} className="card hover-lift" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, animationDelay: `${i * 0.08}s` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <div>
+                <h3 style={{ fontSize: 18, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{v.name}</h3>
+                <div style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>{v.length} {v.type} · {v.location}</div>
+              </div>
+              <StatusBadge status={v.orderStatus} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+              <div style={{ padding: 12, borderRadius: 10, background: COLORS.deepNavy }}><div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>Captain</div><div style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>{v.captain}</div></div>
+              <div style={{ padding: 12, borderRadius: 10, background: COLORS.deepNavy }}><div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>Departure</div><div style={{ fontSize: 13, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>{v.departure}</div></div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ fontSize: 11, color: COLORS.muted }}>Provision Progress</span><span style={{ fontSize: 11, color: COLORS.accent, fontWeight: 700 }}>{v.progress}%</span></div>
+              <div style={{ height: 6, borderRadius: 3, background: COLORS.deepNavy, overflow: "hidden" }}><div style={{ height: "100%", borderRadius: 3, background: v.progress === 100 ? COLORS.accent : `linear-gradient(90deg, ${COLORS.sea}, ${COLORS.seaLight})`, width: `${v.progress}%`, transition: "width 1s ease" }} /></div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 20, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>{v.orderTotal > 0 ? `$${v.orderTotal.toLocaleString()}` : "—"}</span>
+              <button style={{ padding: "8px 16px", borderRadius: 10, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.accent, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{v.progress === 0 ? "Start Order" : "View Details"} →</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function OrdersView() {
+  const [filter, setFilter] = useState("all");
+  const filtered = filter === "all" ? ORDERS_RECENT : ORDERS_RECENT.filter(o => o.status === filter);
+  return (
+    <div className="fade-in">
+      <Header title="Order Management" subtitle="Track and manage all provision orders across your fleet" />
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        {["all", "delivering", "pending", "complete"].map(f => (
+          <button key={f} onClick={() => setFilter(f)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${filter === f ? COLORS.accent : COLORS.glassBorder}`, background: filter === f ? COLORS.accentDim : "transparent", color: filter === f ? COLORS.accent : COLORS.silver, fontSize: 12, fontWeight: 600, cursor: "pointer", textTransform: "capitalize" }}>{f}</button>
+        ))}
+      </div>
+      <div className="card" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
+          {["Order ID", "Vessel", "Date", "Items", "Total", "Status"].map(h => (
+            <span key={h} style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2 }}>{h}</span>
+          ))}
+        </div>
+        {filtered.map((o) => (
+          <div key={o.id} className="hover-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
+            <span style={{ fontSize: 13, color: COLORS.white, fontWeight: 500 }}>{o.vessel}</span>
+            <span style={{ fontSize: 13, color: COLORS.muted }}>{o.date}</span>
+            <span style={{ fontSize: 13, color: COLORS.muted }}>{o.items}</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>${o.total.toLocaleString()}</span>
+            <StatusBadge status={o.status} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SuppliersView() {
+  const suppliers = [
+    { name: "Ocean Prime Seafood", category: "Seafood", rating: 4.9, orders: 234, revenue: "$142K", fill: "99.2%", status: "Premium" },
+    { name: "Prestige Wine & Spirits", category: "Beverages", rating: 5.0, orders: 187, revenue: "$298K", fill: "98.8%", status: "Premium" },
+    { name: "Heritage Meats FL", category: "Proteins", rating: 4.8, orders: 156, revenue: "$89K", fill: "97.5%", status: "Verified" },
+    { name: "Gulf Coast Provisions", category: "Seafood", rating: 4.7, orders: 98, revenue: "$67K", fill: "96.1%", status: "Verified" },
+    { name: "Sunrise Juicery", category: "Beverages", rating: 4.9, orders: 134, revenue: "$48K", fill: "99.5%", status: "Organic" },
+    { name: "Kobe & Co.", category: "Proteins", rating: 5.0, orders: 42, revenue: "$186K", fill: "100%", status: "Ultra Premium" },
+  ];
+  return (
+    <div className="fade-in">
+      <Header title="Supplier Network" subtitle="47 vetted suppliers across 10 categories" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 28 }}>
+        {[{ label: "Active Suppliers", value: "47", sub: "10 categories" }, { label: "Avg Fill Rate", value: "98.4%", sub: "+0.3% vs last month" }, { label: "Supplier GMV", value: "$830K", sub: "Last 30 days" }].map((s, i) => (
+          <div key={i} className="card" style={{ padding: 20, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{s.label}</div>
+            <div style={{ fontSize: 26, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>{s.value}</div>
+            <div style={{ fontSize: 12, color: COLORS.seaLight, marginTop: 4 }}>{s.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div className="card" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
+          {["Supplier", "Category", "Rating", "Orders", "Revenue", "Fill Rate", "Tier"].map(h => (
+            <span key={h} style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2 }}>{h}</span>
+          ))}
+        </div>
+        {suppliers.map((s, i) => (
+          <div key={i} className="hover-row" style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.name}</span>
+            <span style={{ fontSize: 12, color: COLORS.muted }}>{s.category}</span>
+            <span style={{ fontSize: 13, color: COLORS.accent, fontWeight: 600 }}>★ {s.rating}</span>
+            <span style={{ fontSize: 13, color: COLORS.white }}>{s.orders}</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.white }}>{s.revenue}</span>
+            <span style={{ fontSize: 13, color: COLORS.success, fontWeight: 600 }}>{s.fill}</span>
+            <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{s.status}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   ROOT
+   ================================================================ */
+
+export default function YachtProvisionsPro() {
+  const [showPitch, setShowPitch] = useState(true);
+  const [activePage, setActivePage] = useState("dashboard");
+
+  const renderPage = () => {
+    switch (activePage) {
+      case "dashboard": return <Dashboard setActive={setActivePage} />;
+      case "provision": return <ProvisionBuilder />;
+      case "fleet": return <FleetView />;
+      case "orders": return <OrdersView />;
+      case "suppliers": return <SuppliersView />;
+      default: return <Dashboard setActive={setActivePage} />;
+    }
+  };
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: ${COLORS.glassBorder}; border-radius: 3px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes slideEnter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-enter { animation: slideEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .float-slow { animation: floatSlow 8s ease-in-out infinite; }
+        .float-slower { animation: floatSlow 12s ease-in-out infinite reverse; }
+        @keyframes floatSlow { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -15px); } }
+        .fade-in > * { animation: fadeIn 0.5s ease both; }
+        .card { animation: fadeIn 0.5s ease both; }
+        .hover-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .hover-row { transition: background 0.2s ease; }
+        .hover-row:hover { background: rgba(201,169,110,0.04); }
+        input::placeholder { color: ${COLORS.muted}; }
+        input:focus { border-color: ${COLORS.accent}44 !important; box-shadow: 0 0 0 3px ${COLORS.accent}11; }
+        @keyframes appReveal { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; }
+        .provision-grid { display: grid; grid-template-columns: 240px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 1100px) {
+          .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 960px) {
+          .provision-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
+
+      {showPitch && <PitchDeck onFinish={() => setShowPitch(false)} />}
+
+      {!showPitch && (
+        <div style={{
+          minHeight: "100vh",
+          background: `radial-gradient(ellipse at 20% 0%, rgba(26,107,122,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, rgba(201,169,110,0.06) 0%, transparent 50%), ${COLORS.navy}`,
+          fontFamily: "'DM Sans', sans-serif",
+          color: COLORS.white,
+          display: "flex",
+          animation: "appReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both",
+        }}>
+          <SideNav active={activePage} setActive={setActivePage} />
+          <main style={{ flex: 1, marginLeft: 72, padding: "28px 32px", minHeight: "100vh" }}>
+            {renderPage()}
+          </main>
+        </div>
+      )}
+    </>
+  );
+}
