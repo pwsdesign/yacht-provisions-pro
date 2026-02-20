@@ -372,16 +372,16 @@ function RevenueSlide({ lang }) {
    ================================================================ */
 
 const CATEGORIES = [
-  { id: "proteins", label: "Proteins", count: 24 },
-  { id: "seafood", label: "Seafood", count: 31 },
-  { id: "produce", label: "Produce", count: 42 },
-  { id: "dairy", label: "Dairy & Eggs", count: 18 },
-  { id: "bakery", label: "Bakery", count: 15 },
-  { id: "beverages", label: "Beverages", count: 36 },
-  { id: "spirits", label: "Spirits & Wine", count: 28 },
-  { id: "dry", label: "Dry Goods", count: 22 },
-  { id: "cleaning", label: "Cleaning", count: 14 },
-  { id: "specialty", label: "Specialty", count: 19 },
+  { id: "proteins", label: "Proteins", count: 3 },
+  { id: "seafood", label: "Seafood", count: 6 },
+  { id: "produce", label: "Produce", count: 4 },
+  { id: "dairy", label: "Dairy & Eggs", count: 4 },
+  { id: "bakery", label: "Bakery", count: 4 },
+  { id: "beverages", label: "Beverages", count: 4 },
+  { id: "spirits", label: "Spirits & Wine", count: 5 },
+  { id: "dry", label: "Dry Goods", count: 4 },
+  { id: "cleaning", label: "Cleaning", count: 4 },
+  { id: "specialty", label: "Specialty", count: 4 },
 ];
 
 const PRODUCTS = {
@@ -404,6 +404,49 @@ const PRODUCTS = {
     { id: 12, name: "Berkshire Pork Chops", unit: "per lb", price: 22.00, supplier: "Heritage Meats FL", rating: 4.8 },
     { id: 13, name: "Free-Range Chicken Breast", unit: "per lb", price: 12.50, supplier: "Heritage Meats FL", rating: 4.6 },
   ],
+  produce: [
+    { id: 14, name: "Organic Heirloom Tomatoes", unit: "per lb", price: 8.50, supplier: "Homestead Harvest Co.", rating: 4.8, tag: "Organic" },
+    { id: 15, name: "Baby Arugula — Microgreens Mix", unit: "per lb", price: 14.00, supplier: "Redland Farms Direct", rating: 4.9, tag: "Chef's Pick" },
+    { id: 16, name: "Fresh Avocados — Hass (Case)", unit: "per case (24)", price: 48.00, supplier: "Homestead Harvest Co.", rating: 4.7 },
+    { id: 17, name: "Exotic Fruit Platter Assortment", unit: "per set (12)", price: 95.00, supplier: "Tropical Groves Miami", rating: 5.0, tag: "Premium" },
+  ],
+  dairy: [
+    { id: 18, name: "French Brie — Triple Cream", unit: "per lb", price: 32.00, supplier: "Artisan Cheese Importers", rating: 4.9, tag: "Premium" },
+    { id: 19, name: "Italian Burrata — Fresh", unit: "per lb", price: 28.00, supplier: "Artisan Cheese Importers", rating: 5.0, tag: "Chef's Pick" },
+    { id: 20, name: "Farm-Fresh Organic Eggs", unit: "per dozen", price: 9.50, supplier: "Redland Farms Direct", rating: 4.7, tag: "Organic" },
+    { id: 21, name: "European Butter — Kerrygold Block", unit: "per lb", price: 12.00, supplier: "Euro Provisions FL", rating: 4.8 },
+  ],
+  bakery: [
+    { id: 22, name: "Artisan Sourdough Loaf", unit: "per lb", price: 14.00, supplier: "La Boulangerie Fort Lauderdale", rating: 4.9 },
+    { id: 23, name: "French Croissants — Butter", unit: "per dozen", price: 36.00, supplier: "La Boulangerie Fort Lauderdale", rating: 5.0, tag: "Premium" },
+    { id: 24, name: "Gluten-Free Bread Selection", unit: "per lb", price: 16.00, supplier: "Marina Bakehouse", rating: 4.6 },
+    { id: 25, name: "Brioche Burger Buns", unit: "per dozen", price: 18.00, supplier: "Marina Bakehouse", rating: 4.7, tag: "Chef's Pick" },
+  ],
+  spirits: [
+    { id: 26, name: "Clase Azul Reposado Tequila", unit: "per bottle", price: 175.00, supplier: "South Beach Spirits", rating: 5.0, tag: "Ultra Premium" },
+    { id: 27, name: "Hendrick's Gin", unit: "per bottle", price: 42.00, supplier: "South Beach Spirits", rating: 4.8 },
+    { id: 28, name: "Macallan 18 Year Scotch", unit: "per bottle", price: 320.00, supplier: "Prestige Wine & Spirits", rating: 5.0, tag: "Ultra Premium" },
+    { id: 29, name: "Veuve Clicquot Brut", unit: "per case (6)", price: 360.00, supplier: "Prestige Wine & Spirits", rating: 4.9, tag: "Premium" },
+    { id: 30, name: "Caymus Cabernet Sauvignon", unit: "per bottle", price: 95.00, supplier: "South Beach Spirits", rating: 4.8, tag: "Premium" },
+  ],
+  dry: [
+    { id: 31, name: "Italian Arborio Risotto Rice", unit: "per lb", price: 8.00, supplier: "Mediterranean Pantry Co.", rating: 4.7 },
+    { id: 32, name: "Truffle Oil — Black Périgord", unit: "per bottle", price: 45.00, supplier: "Mediterranean Pantry Co.", rating: 5.0, tag: "Premium" },
+    { id: 33, name: "Imported Pasta Assortment", unit: "per set (12)", price: 38.00, supplier: "Euro Provisions FL", rating: 4.8 },
+    { id: 34, name: "Organic Quinoa & Ancient Grains", unit: "per lb", price: 12.00, supplier: "Mediterranean Pantry Co.", rating: 4.6, tag: "Organic" },
+  ],
+  cleaning: [
+    { id: 35, name: "Marine-Grade Teak Cleaner", unit: "per bottle", price: 28.00, supplier: "Dockside Supply Co.", rating: 4.8 },
+    { id: 36, name: "Eco-Safe Deck Wash Concentrate", unit: "per bottle", price: 22.00, supplier: "Dockside Supply Co.", rating: 4.7, tag: "Organic" },
+    { id: 37, name: "Stainless Steel Polish — Marine", unit: "per bottle", price: 18.00, supplier: "Marine Clean Pro", rating: 4.9, tag: "Premium" },
+    { id: 38, name: "Biodegradable All-Purpose Cleaner", unit: "per case (24)", price: 65.00, supplier: "Marine Clean Pro", rating: 4.6 },
+  ],
+  specialty: [
+    { id: 39, name: "Beluga Caviar — 50g Tin", unit: "per set (12)", price: 285.00, supplier: "Caviar & Co. Miami", rating: 5.0, tag: "Ultra Premium" },
+    { id: 40, name: "White Truffle — Alba, Italy", unit: "per lb", price: 420.00, supplier: "Mediterranean Pantry Co.", rating: 5.0, tag: "Seasonal" },
+    { id: 41, name: "Saffron — Iranian Grade 1", unit: "per bottle", price: 65.00, supplier: "Caviar & Co. Miami", rating: 4.9, tag: "Premium" },
+    { id: 42, name: "Wagyu Beef Jerky — Artisan", unit: "per lb", price: 48.00, supplier: "Kobe & Co.", rating: 4.8, tag: "Chef's Pick" },
+  ],
 };
 
 const FLEET = [
@@ -413,13 +456,21 @@ const FLEET = [
   { name: "M/Y Poseidon's Crown", length: "140ft", type: "Lürssen", status: "Docked", departure: "Feb 25, 12:00 PM", captain: "Capt. Marcus Hall", orderStatus: "Not Started", orderTotal: 0, progress: 0, location: "Bahia Mar" },
 ];
 
-const ORDERS_RECENT = [
+const INITIAL_ORDERS = [
   { id: "YPP-2847", vessel: "M/Y Serenity", date: "Feb 18", total: 14280, items: 47, status: "delivering" },
   { id: "YPP-2846", vessel: "M/Y Azure Dream", date: "Feb 17", total: 28450, items: 83, status: "complete" },
   { id: "YPP-2845", vessel: "S/Y Wind Dancer", date: "Feb 16", total: 8920, items: 31, status: "pending" },
   { id: "YPP-2844", vessel: "M/Y Bella Vita", date: "Feb 15", total: 11340, items: 56, status: "complete" },
   { id: "YPP-2843", vessel: "M/Y Oceanus", date: "Feb 14", total: 19870, items: 64, status: "complete" },
 ];
+
+const REORDER_TEMPLATE = {
+  1: { id: 1, name: "Maine Lobster Tails", unit: "per lb", price: 42.00, supplier: "Ocean Prime Seafood", rating: 4.9, tag: "Premium", qty: 4 },
+  3: { id: 3, name: "Sashimi-Grade Ahi Tuna", unit: "per lb", price: 38.50, supplier: "Blue Marlin Direct", rating: 5.0, tag: "Chef's Pick", qty: 3 },
+  7: { id: 7, name: "Dom Pérignon 2013", unit: "per bottle", price: 285.00, supplier: "Prestige Wine & Spirits", rating: 5.0, tag: "Premium", qty: 2 },
+  11: { id: 11, name: "Japanese A5 Wagyu Strip", unit: "per lb", price: 185.00, supplier: "Kobe & Co.", rating: 5.0, tag: "Ultra Premium", qty: 2 },
+  23: { id: 23, name: "French Croissants — Butter", unit: "per dozen", price: 36.00, supplier: "La Boulangerie Fort Lauderdale", rating: 5.0, tag: "Premium", qty: 1 },
+};
 
 function AnimatedNumber({ value, prefix = "" }) {
   const [display, setDisplay] = useState(0);
@@ -511,12 +562,13 @@ function Header({ title, subtitle, lang, setLang }) {
   );
 }
 
-function Dashboard({ setActive, lang, setLang }) {
+function Dashboard({ setActive, orders, setInitialCart, lang, setLang }) {
+  const [showManifest, setShowManifest] = useState(false);
   const stats = [
-    { label: t("activeOrders", lang), value: 12, change: t("plus3Today", lang), icon: "◈" },
+    { label: t("activeOrders", lang), value: orders.length, change: t("plus3Today", lang), icon: "◈" },
     { label: t("monthlyGMV", lang), value: 284500, prefix: "$", change: t("plus18vsJan", lang), icon: "◆" },
     { label: t("fleetAccounts", lang), value: 8, change: t("plus2Month", lang), icon: "⎔" },
-    { label: t("suppliersOnline", lang), value: 47, change: t("fillRate98", lang), icon: "◎" },
+    { label: t("suppliersOnline", lang), value: 18, change: t("fillRate98", lang), icon: "◎" },
   ];
   return (
     <div className="fade-in">
@@ -539,8 +591,8 @@ function Dashboard({ setActive, lang, setLang }) {
             <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{t("recentOrders", lang)}</h3>
             <button onClick={() => setActive("orders")} style={{ fontSize: 12, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>{t("viewAll", lang)}</button>
           </div>
-          {ORDERS_RECENT.map((o) => (
-            <div key={o.id} className="hover-row dashboard-order-row" style={{ display: "grid", gridTemplateColumns: "90px 1fr 80px 100px 100px", alignItems: "center", padding: "14px 12px", borderRadius: 10, gap: 12 }}>
+          {orders.map((o) => (
+            <div key={o.id} onClick={() => setActive("orders")} className="hover-row dashboard-order-row" style={{ display: "grid", gridTemplateColumns: "90px 1fr 80px 100px 100px", alignItems: "center", padding: "14px 12px", borderRadius: 10, gap: 12, cursor: "pointer" }}>
               <span className="order-id" style={{ fontSize: 12, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
               <span className="order-vessel" style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{o.vessel}</span>
               <span className="order-items" style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{o.items} {t("items", lang)}</span>
@@ -552,7 +604,7 @@ function Dashboard({ setActive, lang, setLang }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div className="card" style={{ padding: 24, borderRadius: 16, background: `linear-gradient(135deg, ${COLORS.accent}18, ${COLORS.sea}18)`, border: `1px solid ${COLORS.glassBorder}` }}>
             <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>{t("quickActions", lang)}</h3>
-            {[{ label: t("newProvisionOrder", lang), icon: "＋", action: () => setActive("provision") }, { label: t("reorderTemplate", lang), icon: "↻" }, { label: t("genManifest", lang), icon: "☷" }].map((a, i) => (
+            {[{ label: t("newProvisionOrder", lang), icon: "＋", action: () => setActive("provision") }, { label: t("reorderTemplate", lang), icon: "↻", action: () => { setInitialCart(REORDER_TEMPLATE); setActive("provision"); } }, { label: t("genManifest", lang), icon: "☷", action: () => setShowManifest(true) }].map((a, i) => (
               <button key={i} onClick={a.action} className="hover-lift" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, textAlign: "left", width: "100%", marginBottom: 10 }}>
                 <span style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", color: COLORS.accent, fontSize: 16 }}>{a.icon}</span>{a.label}
               </button>
@@ -567,26 +619,95 @@ function Dashboard({ setActive, lang, setLang }) {
                   <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{f.name}</div>
                   <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{f.departure}</div>
                 </div>
-                <StatusBadge status={f.orderStatus} />
+                <StatusBadge status={f.orderStatus} lang={lang} />
               </div>
             ))}
           </div>
         </div>
       </div>
+      {showManifest && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 500, background: "rgba(6,20,37,0.85)", backdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowManifest(false)}>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: 560, width: "100%", borderRadius: 20, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 32, animation: "fadeInUp 0.4s ease both", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{t("customsManifest", lang)}</h3>
+              <button onClick={() => setShowManifest(false)} style={{ background: "none", border: "none", color: COLORS.silver, cursor: "pointer", fontSize: 20 }}>✕</button>
+            </div>
+            <div style={{ width: "100%", height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)`, marginBottom: 24 }} />
+            <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "12px 16px", marginBottom: 24 }}>
+              {[
+                [t("manifestDocNum", lang), "CBP-YPP-2847-FL"],
+                [t("thVessel", lang), "M/Y Serenity — 82ft Sunseeker"],
+                [t("portOfDeparture", lang), "Fort Lauderdale, FL"],
+                [t("destination", lang), "Nassau, Bahamas"],
+                [t("departureDate", lang), "Feb 20, 2026"],
+                [t("captain", lang), "Capt. James Reed"],
+              ].map(([label, value], i) => (
+                <div key={i} style={{ display: "contents" }}>
+                  <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{label}</span>
+                  <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{value}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding: 16, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, marginBottom: 24 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 100px", gap: 8, marginBottom: 12 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1 }}>{t("thCategory", lang)}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1 }}>{t("thItems", lang)}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, textAlign: "right" }}>{t("declaredValue", lang)}</span>
+              </div>
+              {[
+                [t("catSeafood", lang), "12", "$1,284"],
+                [t("catBeverages", lang), "8", "$2,163"],
+                [t("catProteins", lang), "6", "$1,492"],
+                [t("catProduce", lang), "10", "$685"],
+                [t("catBakery", lang), "5", "$248"],
+                [t("catSpecialty", lang), "6", "$8,408"],
+              ].map(([cat, items, val], i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 80px 100px", gap: 8, padding: "8px 0", borderTop: `1px solid ${COLORS.glassBorder}22` }}>
+                  <span style={{ fontSize: 13, color: COLORS.white }}>{cat}</span>
+                  <span style={{ fontSize: 13, color: COLORS.muted }}>{items}</span>
+                  <span style={{ fontSize: 13, color: COLORS.accent, fontWeight: 600, textAlign: "right" }}>{val}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: COLORS.muted, fontStyle: "italic", marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>{t("generatedBy", lang)}</div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => alert(t("manifestGenerated", lang))} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("downloadPdf", lang)}</button>
+              <button onClick={() => setShowManifest(false)} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("close", lang)}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function ProvisionBuilder({ lang, setLang }) {
+function ProvisionBuilder({ lang, setLang, orders, setOrders, setActive, initialCart, setInitialCart }) {
   const [selectedCat, setSelectedCat] = useState("seafood");
   const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmedOrder, setConfirmedOrder] = useState(null);
   const products = PRODUCTS[selectedCat] || [];
   const cartItems = Object.entries(cart);
   const cartTotal = cartItems.reduce((sum, [, { price, qty }]) => sum + price * qty, 0);
   const cartCount = cartItems.reduce((sum, [, { qty }]) => sum + qty, 0);
   const addToCart = (p) => setCart(prev => ({ ...prev, [p.id]: { ...p, qty: (prev[p.id]?.qty || 0) + 1 } }));
   const updateQty = (id, d) => setCart(prev => { const item = prev[id]; if (!item) return prev; const n = item.qty + d; if (n <= 0) { const { [id]: _, ...r } = prev; return r; } return { ...prev, [id]: { ...item, qty: n } }; });
+
+  // Hydrate cart from reorder template
+  useEffect(() => {
+    if (initialCart) { setCart(initialCart); setShowCart(true); setInitialCart(null); }
+  }, [initialCart]);
+
+  const onSubmitOrder = () => {
+    const lastId = orders.length > 0 ? parseInt(orders[0].id.split("-")[1]) + 1 : 2848;
+    const newOrder = { id: `YPP-${lastId}`, vessel: "M/Y Serenity", date: "Feb 20", total: Math.round(cartTotal + 150), items: cartCount, status: "pending" };
+    setOrders(prev => [newOrder, ...prev]);
+    setConfirmedOrder(newOrder);
+    setShowConfirmation(true);
+    setCart({});
+    setShowCart(false);
+  };
 
   return (
     <div className="fade-in">
@@ -678,17 +799,50 @@ function ProvisionBuilder({ lang, setLang }) {
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>{t("subtotal", lang)}</span><span style={{ fontSize: 13, color: COLORS.white }}>${cartTotal.toFixed(2)}</span></div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>{t("coordFee", lang)}</span><span style={{ fontSize: 13, color: COLORS.white }}>$150.00</span></div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.white }}>{t("total", lang)}</span><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.accent }}>${(cartTotal + 150).toFixed(2)}</span></div>
-                <button className="hover-lift" style={{ width: "100%", padding: "14px 0", borderRadius: 14, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("scheduleDelivery", lang)}</button>
+                <button onClick={onSubmitOrder} className="hover-lift" style={{ width: "100%", padding: "14px 0", borderRadius: 14, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("scheduleDelivery", lang)}</button>
               </div>
             </div>
           )}
         </div>
       </div>
+      {showConfirmation && confirmedOrder && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 500, background: "rgba(6,20,37,0.85)", backdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ maxWidth: 440, width: "100%", borderRadius: 20, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 32, textAlign: "center", animation: "fadeInUp 0.4s ease both" }}>
+            <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(52,211,153,0.15)", border: "2px solid rgba(52,211,153,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", animation: "scaleIn 0.5s ease both" }}>
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <path d="M10 18L16 24L26 12" stroke={COLORS.success} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ strokeDasharray: 50, strokeDashoffset: 0, animation: "checkDraw 0.6s ease 0.3s both" }} />
+              </svg>
+            </div>
+            <h3 style={{ fontSize: 24, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 8px 0" }}>{t("orderConfirmed", lang)}</h3>
+            <p style={{ fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginBottom: 24 }}>{t("orderConfirmedSub", lang)}</p>
+            <div style={{ width: "100%", height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)`, marginBottom: 24 }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 20px", textAlign: "left", marginBottom: 28, padding: "0 12px" }}>
+              {[
+                [t("thOrderId", lang), confirmedOrder.id],
+                [t("thVessel", lang), confirmedOrder.vessel],
+                [t("thItems", lang), `${confirmedOrder.items} ${t("items", lang)}`],
+                [t("thTotal", lang), `$${confirmedOrder.total.toLocaleString()}`],
+                [t("deliveryWindow", lang), t("todayDelivery", lang)],
+                [t("thStatus", lang), t("statusPending", lang)],
+              ].map(([label, value], i) => (
+                <div key={i}>
+                  <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{label}</div>
+                  <div style={{ fontSize: 14, color: i === 0 ? COLORS.accent : COLORS.white, fontWeight: 600, fontFamily: i === 0 ? "'DM Mono', monospace" : "'DM Sans', sans-serif" }}>{value}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => { setShowConfirmation(false); setActive("orders"); }} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("viewOrders", lang)}</button>
+              <button onClick={() => setShowConfirmation(false)} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("continueShopping", lang)}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function FleetView({ lang, setLang }) {
+function FleetView({ lang, setLang, setActive }) {
   return (
     <div className="fade-in">
       <Header title={t("fleetDashboard", lang)} subtitle={t("fleetSub", lang)} lang={lang} setLang={setLang} />
@@ -712,7 +866,7 @@ function FleetView({ lang, setLang }) {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 20, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>{v.orderTotal > 0 ? `$${v.orderTotal.toLocaleString()}` : "—"}</span>
-              <button style={{ padding: "8px 16px", borderRadius: 10, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.accent, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{v.progress === 0 ? t("startOrder", lang) : t("viewDetails", lang)} →</button>
+              <button onClick={() => setActive(v.progress === 0 ? "provision" : "orders")} style={{ padding: "8px 16px", borderRadius: 10, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.accent, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{v.progress === 0 ? t("startOrder", lang) : t("viewDetails", lang)} →</button>
             </div>
           </div>
         ))}
@@ -721,9 +875,10 @@ function FleetView({ lang, setLang }) {
   );
 }
 
-function OrdersView({ lang, setLang }) {
+function OrdersView({ orders, lang, setLang }) {
   const [filter, setFilter] = useState("all");
-  const filtered = filter === "all" ? ORDERS_RECENT : ORDERS_RECENT.filter(o => o.status === filter);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const filtered = filter === "all" ? orders : orders.filter(o => o.status === filter);
   return (
     <div className="fade-in">
       <Header title={t("orderManagement", lang)} subtitle={t("ordersSub", lang)} lang={lang} setLang={setLang} />
@@ -739,7 +894,7 @@ function OrdersView({ lang, setLang }) {
           ))}
         </div>
         {filtered.map((o) => (
-          <div key={o.id} className="hover-row table-data-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
+          <div key={o.id} onClick={() => setSelectedOrder(o)} className="hover-row table-data-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
             <span style={{ fontSize: 13, color: COLORS.white, fontWeight: 500 }}>{o.vessel}</span>
             <span style={{ fontSize: 13, color: COLORS.muted }}>{o.date}</span>
@@ -752,7 +907,7 @@ function OrdersView({ lang, setLang }) {
       {/* Mobile order cards */}
       <div className="orders-cards-mobile" style={{ display: "none", flexDirection: "column", gap: 12 }}>
         {filtered.map((o) => (
-          <div key={o.id} className="card" style={{ padding: 16, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+          <div key={o.id} onClick={() => setSelectedOrder(o)} className="card" style={{ padding: 16, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, cursor: "pointer" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
               <StatusBadge status={o.status} lang={lang} />
@@ -765,6 +920,43 @@ function OrdersView({ lang, setLang }) {
           </div>
         ))}
       </div>
+      {selectedOrder && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 500, background: "rgba(6,20,37,0.85)", backdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setSelectedOrder(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: 480, width: "100%", borderRadius: 20, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 32, animation: "fadeInUp 0.4s ease both" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <div>
+                <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{t("orderDetails", lang)}</h3>
+                <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{selectedOrder.id}</span>
+              </div>
+              <button onClick={() => setSelectedOrder(null)} style={{ background: "none", border: "none", color: COLORS.silver, cursor: "pointer", fontSize: 20 }}>✕</button>
+            </div>
+            <div style={{ width: "100%", height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)`, marginBottom: 20 }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: 24 }}>
+              <div style={{ padding: 14, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("thVessel", lang)}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{selectedOrder.vessel}</div>
+              </div>
+              <div style={{ padding: 14, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("thDate", lang)}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{selectedOrder.date}</div>
+              </div>
+              <div style={{ padding: 14, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("thItems", lang)}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{selectedOrder.items} {t("items", lang)}</div>
+              </div>
+              <div style={{ padding: 14, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("thTotal", lang)}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.accent }}>${selectedOrder.total.toLocaleString()}</div>
+              </div>
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{t("thStatus", lang)}</div>
+              <StatusBadge status={selectedOrder.status} lang={lang} />
+            </div>
+            <button onClick={() => setSelectedOrder(null)} className="hover-lift" style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("close", lang)}</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -777,12 +969,24 @@ function SuppliersView({ lang, setLang }) {
     { name: "Gulf Coast Provisions", category: "Seafood", rating: 4.7, orders: 98, revenue: "$67K", fill: "96.1%", status: "Verified" },
     { name: "Sunrise Juicery", category: "Beverages", rating: 4.9, orders: 134, revenue: "$48K", fill: "99.5%", status: "Organic" },
     { name: "Kobe & Co.", category: "Proteins", rating: 5.0, orders: 42, revenue: "$186K", fill: "100%", status: "Ultra Premium" },
+    { name: "Homestead Harvest Co.", category: "Produce", rating: 4.8, orders: 112, revenue: "$62K", fill: "97.8%", status: "Verified" },
+    { name: "Redland Farms Direct", category: "Produce", rating: 4.9, orders: 89, revenue: "$41K", fill: "98.3%", status: "Organic" },
+    { name: "Tropical Groves Miami", category: "Produce", rating: 5.0, orders: 67, revenue: "$38K", fill: "99.1%", status: "Premium" },
+    { name: "Artisan Cheese Importers", category: "Dairy & Eggs", rating: 4.9, orders: 94, revenue: "$78K", fill: "98.6%", status: "Premium" },
+    { name: "Euro Provisions FL", category: "Dry Goods", rating: 4.8, orders: 76, revenue: "$44K", fill: "97.2%", status: "Verified" },
+    { name: "La Boulangerie Fort Lauderdale", category: "Bakery", rating: 5.0, orders: 108, revenue: "$52K", fill: "99.4%", status: "Premium" },
+    { name: "Marina Bakehouse", category: "Bakery", rating: 4.7, orders: 65, revenue: "$28K", fill: "96.8%", status: "Verified" },
+    { name: "South Beach Spirits", category: "Spirits & Wine", rating: 4.9, orders: 143, revenue: "$195K", fill: "98.9%", status: "Premium" },
+    { name: "Mediterranean Pantry Co.", category: "Dry Goods", rating: 4.8, orders: 88, revenue: "$56K", fill: "97.5%", status: "Verified" },
+    { name: "Dockside Supply Co.", category: "Cleaning", rating: 4.8, orders: 72, revenue: "$34K", fill: "98.0%", status: "Verified" },
+    { name: "Marine Clean Pro", category: "Cleaning", rating: 4.9, orders: 58, revenue: "$22K", fill: "99.0%", status: "Premium" },
+    { name: "Caviar & Co. Miami", category: "Specialty", rating: 5.0, orders: 38, revenue: "$142K", fill: "100%", status: "Ultra Premium" },
   ];
   return (
     <div className="fade-in">
       <Header title={t("supplierNetwork", lang)} subtitle={t("suppliersSub", lang)} lang={lang} setLang={setLang} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 28 }}>
-        {[{ label: t("activeSuppliers", lang), value: "47", sub: t("tenCategories", lang) }, { label: t("avgFillRate", lang), value: "98.4%", sub: t("vsLastMonth", lang) }, { label: t("supplierGMV", lang), value: "$830K", sub: t("last30Days", lang) }].map((s, i) => (
+        {[{ label: t("activeSuppliers", lang), value: "18", sub: t("tenCategories", lang) }, { label: t("avgFillRate", lang), value: "98.4%", sub: t("vsLastMonth", lang) }, { label: t("supplierGMV", lang), value: "$830K", sub: t("last30Days", lang) }].map((s, i) => (
           <div key={i} className="card" style={{ padding: 20, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{s.label}</div>
             <div style={{ fontSize: 26, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>{s.value}</div>
@@ -862,15 +1066,17 @@ export default function YachtProvisionsPro() {
     try { return localStorage.getItem("ypp-lang") || "en"; } catch { return "en"; }
   });
   useEffect(() => { try { localStorage.setItem("ypp-lang", lang); } catch {} }, [lang]);
+  const [orders, setOrders] = useState(INITIAL_ORDERS);
+  const [initialCart, setInitialCart] = useState(null);
 
   const renderPage = () => {
     switch (activePage) {
-      case "dashboard": return <Dashboard setActive={setActivePage} lang={lang} setLang={setLang} />;
-      case "provision": return <ProvisionBuilder lang={lang} setLang={setLang} />;
-      case "fleet": return <FleetView lang={lang} setLang={setLang} />;
-      case "orders": return <OrdersView lang={lang} setLang={setLang} />;
+      case "dashboard": return <Dashboard setActive={setActivePage} orders={orders} setInitialCart={setInitialCart} lang={lang} setLang={setLang} />;
+      case "provision": return <ProvisionBuilder orders={orders} setOrders={setOrders} setActive={setActivePage} initialCart={initialCart} setInitialCart={setInitialCart} lang={lang} setLang={setLang} />;
+      case "fleet": return <FleetView setActive={setActivePage} lang={lang} setLang={setLang} />;
+      case "orders": return <OrdersView orders={orders} lang={lang} setLang={setLang} />;
       case "suppliers": return <SuppliersView lang={lang} setLang={setLang} />;
-      default: return <Dashboard setActive={setActivePage} lang={lang} setLang={setLang} />;
+      default: return <Dashboard setActive={setActivePage} orders={orders} setInitialCart={setInitialCart} lang={lang} setLang={setLang} />;
     }
   };
 
@@ -884,6 +1090,9 @@ export default function YachtProvisionsPro() {
         ::-webkit-scrollbar-thumb { background: ${COLORS.glassBorder}; border-radius: 3px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes scaleIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes checkDraw { 0% { stroke-dashoffset: 50; } 100% { stroke-dashoffset: 0; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         @keyframes slideEnter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
         .slide-enter { animation: slideEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
