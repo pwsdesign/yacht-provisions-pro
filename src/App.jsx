@@ -685,7 +685,7 @@ function Header({ title, subtitle, lang, setLang, setActive, orders, setToast })
   })();
 
   return (
-    <header className="app-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, gap: 16, flexWrap: "wrap" }}>
+    <header className="app-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, gap: 16, flexWrap: "wrap", position: "relative", zIndex: 100 }}>
       <div style={{ minWidth: 0 }}>
         <h1 className="header-title" style={{ fontSize: 28, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif", letterSpacing: -0.5, margin: 0 }}>{title}</h1>
         <p className="header-subtitle" style={{ fontSize: 13, color: COLORS.muted, marginTop: 4, fontFamily: "'DM Sans', sans-serif" }}>{subtitle}</p>
@@ -697,8 +697,8 @@ function Header({ title, subtitle, lang, setLang, setActive, orders, setToast })
           {/* Search dropdown */}
           {showSearch && searchQuery.length >= 2 && searchResults && (
             <>
-              <div onClick={() => setShowSearch(false)} style={{ position: "fixed", inset: 0, zIndex: 299 }} />
-              <div style={{ position: "absolute", top: 48, left: 0, right: 0, minWidth: 280, maxWidth: 360, borderRadius: 16, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 12, zIndex: 300, animation: "fadeInUp 0.2s ease both", boxShadow: "0 8px 32px rgba(0,0,0,0.4)", maxHeight: 400, overflowY: "auto" }}>
+              <div onClick={() => setShowSearch(false)} style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.3)" }} />
+              <div style={{ position: "absolute", top: 48, left: 0, right: 0, minWidth: 280, maxWidth: 360, borderRadius: 16, background: "#0B1426", border: `1px solid ${COLORS.glassBorder}`, padding: 12, zIndex: 1000, animation: "fadeInUp 0.2s ease both", boxShadow: "0 12px 48px rgba(0,0,0,0.7)", maxHeight: 400, overflowY: "auto" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "4px 8px 8px", fontFamily: "'DM Sans', sans-serif" }}>{t("searchResults", lang)}</div>
                 {searchResults === "empty" ? (
                   <div style={{ padding: "12px 8px", fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{t("noResults", lang)}</div>
@@ -750,8 +750,8 @@ function Header({ title, subtitle, lang, setLang, setActive, orders, setToast })
           {/* Notification dropdown */}
           {showNotifs && (
             <>
-              <div onClick={() => setShowNotifs(false)} style={{ position: "fixed", inset: 0, zIndex: 299 }} />
-              <div style={{ position: "absolute", right: 0, top: 48, width: 360, maxWidth: "90vw", borderRadius: 16, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, zIndex: 300, animation: "fadeInUp 0.2s ease both", boxShadow: "0 8px 32px rgba(0,0,0,0.4)", overflow: "hidden" }}>
+              <div onClick={() => setShowNotifs(false)} style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.3)" }} />
+              <div style={{ position: "absolute", right: 0, top: 48, width: 360, maxWidth: "90vw", borderRadius: 16, background: "#0B1426", border: `1px solid ${COLORS.glassBorder}`, zIndex: 1000, animation: "fadeInUp 0.2s ease both", boxShadow: "0 12px 48px rgba(0,0,0,0.7)", overflow: "hidden" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 16px 12px" }}>
                   <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{t("notifications", lang)}</span>
                   <button onClick={() => setShowNotifs(false)} style={{ background: "none", border: "none", color: COLORS.accent, cursor: "pointer", fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{t("markAllRead", lang)}</button>
