@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { LangContext, t, tUnit, tTag, tTier, tCat, tSupCat } from "./i18n";
 
 const COLORS = {
   navy: "#0B1D33",
@@ -24,7 +25,7 @@ const COLORS = {
    PITCH DECK SLIDES
    ================================================================ */
 
-function PitchDeck({ onFinish }) {
+function PitchDeck({ onFinish, lang, setLang }) {
   const [currentSlide, setCurrentSlide] = useState(-1);
   const [transitioning, setTransitioning] = useState(false);
   const [entered, setEntered] = useState(false);
@@ -66,7 +67,7 @@ function PitchDeck({ onFinish }) {
     return () => window.removeEventListener("keydown", handler);
   });
 
-  const slideNames = ["Title", "Problem", "Solution", "Market", "Revenue"];
+  const slideNames = [t("slideTitle", lang), t("slideProblem", lang), t("slideSolution", lang), t("slideMarket", lang), t("slideRevenue", lang)];
 
   return (
     <div className="pitch-deck" style={{
@@ -78,6 +79,10 @@ function PitchDeck({ onFinish }) {
       display: "flex",
       flexDirection: "column",
     }}>
+      {/* Lang toggle top-right */}
+      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 20 }}>
+        <LangToggle lang={lang} setLang={setLang} />
+      </div>
       {/* Ambient */}
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}>
         <div className="float-slow" style={{ position: "absolute", top: "8%", left: "5%", width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,169,110,0.04) 0%, transparent 70%)" }} />
@@ -104,11 +109,11 @@ function PitchDeck({ onFinish }) {
         transform: transitioning ? "scale(0.97)" : "scale(1)",
         transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}>
-        {currentSlide === -1 && <TitleSlide />}
-        {currentSlide === 0 && <ProblemSlide />}
-        {currentSlide === 1 && <SolutionSlide />}
-        {currentSlide === 2 && <MarketSlide />}
-        {currentSlide === 3 && <RevenueSlide />}
+        {currentSlide === -1 && <TitleSlide lang={lang} />}
+        {currentSlide === 0 && <ProblemSlide lang={lang} />}
+        {currentSlide === 1 && <SolutionSlide lang={lang} />}
+        {currentSlide === 2 && <MarketSlide lang={lang} />}
+        {currentSlide === 3 && <RevenueSlide lang={lang} />}
       </div>
 
       {/* Bottom nav */}
@@ -124,7 +129,7 @@ function PitchDeck({ onFinish }) {
         </div>
         <div className="pitch-nav-buttons" style={{ display: "flex", gap: 12 }}>
           {currentSlide > -1 && (
-            <button onClick={goPrev} className="hover-lift" style={{ padding: "12px 24px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", backdropFilter: "blur(10px)" }}>← Back</button>
+            <button onClick={goPrev} className="hover-lift" style={{ padding: "12px 24px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", backdropFilter: "blur(10px)" }}>{t("back", lang)}</button>
           )}
           <button onClick={goNext} className="hover-lift pitch-next-btn" style={{
             padding: "12px 32px", borderRadius: 12, border: "none",
@@ -133,7 +138,7 @@ function PitchDeck({ onFinish }) {
             fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
             boxShadow: `0 4px 20px ${currentSlide === totalSlides - 1 ? "rgba(26,107,122,0.4)" : "rgba(201,169,110,0.3)"}`,
           }}>
-            {currentSlide === totalSlides - 1 ? "Launch Demo →" : currentSlide === -1 ? "Begin →" : "Continue →"}
+            {currentSlide === totalSlides - 1 ? t("launchDemo", lang) : currentSlide === -1 ? t("begin", lang) : t("continue", lang)}
           </button>
         </div>
       </div>
@@ -141,13 +146,13 @@ function PitchDeck({ onFinish }) {
       <div className="pitch-keyboard-hint" style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", fontSize: 11, color: COLORS.muted + "66", display: "flex", gap: 12, alignItems: "center" }}>
         <span style={{ padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.muted}33`, fontSize: 10 }}>←</span>
         <span style={{ padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.muted}33`, fontSize: 10 }}>→</span>
-        <span>or click to navigate</span>
+        <span>{t("orClick", lang)}</span>
       </div>
     </div>
   );
 }
 
-function TitleSlide() {
+function TitleSlide({ lang }) {
   return (
     <div className="pitch-slide-content" style={{ textAlign: "center", maxWidth: 800, padding: "0 40px" }}>
       <div className="slide-enter" style={{ width: 80, height: 80, borderRadius: 24, margin: "0 auto 40px", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, fontWeight: 900, color: COLORS.deepNavy, fontFamily: "'Playfair Display', serif", boxShadow: "0 16px 48px rgba(201,169,110,0.3)", animationDelay: "0.2s" }}>Y</div>
@@ -158,11 +163,11 @@ function TitleSlide() {
         <div style={{ width: 60, height: 1, margin: "24px auto", background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)` }} />
       </div>
       <div className="slide-enter" style={{ animationDelay: "0.8s" }}>
-        <p className="pitch-subtitle" style={{ fontSize: 20, fontWeight: 300, color: COLORS.silver, fontFamily: "'Playfair Display', serif", lineHeight: 1.6, maxWidth: 600, margin: "0 auto 32px" }}>The first mobile platform purpose-built for yacht provisioning</p>
+        <p className="pitch-subtitle" style={{ fontSize: 20, fontWeight: 300, color: COLORS.silver, fontFamily: "'Playfair Display', serif", lineHeight: 1.6, maxWidth: 600, margin: "0 auto 32px" }}>{t("titleTagline", lang)}</p>
       </div>
       <div className="slide-enter" style={{ animationDelay: "1s" }}>
         <div className="pitch-stats-bar" style={{ display: "inline-flex", gap: 24, padding: "16px 32px", borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, backdropFilter: "blur(20px)" }}>
-          {[{ label: "Market", value: "$60B" }, { label: "FL Opportunity", value: "$500M+" }, { label: "Seed Ask", value: "$1.5M" }].map((item, i) => (
+          {[{ label: t("titleMarket", lang), value: "$60B" }, { label: t("titleFLOpp", lang), value: "$500M+" }, { label: t("titleSeed", lang), value: "$1.5M" }].map((item, i) => (
             <div key={i} style={{ textAlign: "center", padding: "0 12px", borderRight: i < 2 ? `1px solid ${COLORS.glassBorder}` : "none" }}>
               <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{item.label}</div>
               <div className="pitch-stat-value" style={{ fontSize: 22, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
@@ -171,32 +176,32 @@ function TitleSlide() {
         </div>
       </div>
       <div className="slide-enter" style={{ animationDelay: "1.2s", marginTop: 48 }}>
-        <p style={{ fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontStyle: "italic" }}>Shopify + DoorDash — for the yachting industry</p>
+        <p style={{ fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontStyle: "italic" }}>{t("titleMotto", lang)}</p>
       </div>
     </div>
   );
 }
 
-function ProblemSlide() {
+function ProblemSlide({ lang }) {
   const painPoints = [
-    { title: "6–10 Vendor Calls Per Trip", desc: "Captains manually contact separate suppliers for every category — seafood, produce, spirits, cleaning — each time." },
-    { title: "Uncoordinated Deliveries", desc: "Multiple vendors delivering at different times. No cold-chain guarantees. Missed windows delay departures." },
-    { title: "Manual Customs Manifests", desc: "International departures require CBP-compliant paperwork — done by hand from scattered invoices every trip." },
-    { title: "No Consolidated Billing", desc: "Every vendor invoiced separately. No spend visibility. Fleet managers reconcile dozens of invoices per vessel." },
-    { title: "Zero Reusability", desc: "No saved templates. No guest profiles. The entire process starts from scratch for every charter, every week." },
-    { title: "WhatsApp & Spreadsheets", desc: "The $60B yacht industry runs on group chats, phone calls, and personal relationships. There is no platform." },
+    { title: t("pain1Title", lang), desc: t("pain1Desc", lang) },
+    { title: t("pain2Title", lang), desc: t("pain2Desc", lang) },
+    { title: t("pain3Title", lang), desc: t("pain3Desc", lang) },
+    { title: t("pain4Title", lang), desc: t("pain4Desc", lang) },
+    { title: t("pain5Title", lang), desc: t("pain5Desc", lang) },
+    { title: t("pain6Title", lang), desc: t("pain6Desc", lang) },
   ];
   return (
     <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
       <div style={{ textAlign: "center", marginBottom: 48 }}>
         <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
-          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.2)", color: COLORS.danger, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Problem</span>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.2)", color: COLORS.danger, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>{t("theProblem", lang)}</span>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>Provisioning a yacht is <span style={{ color: COLORS.danger, fontStyle: "italic" }}>broken</span></h2>
+          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>{t("problemH2a", lang)}<span style={{ color: COLORS.danger, fontStyle: "italic" }}>{t("problemH2b", lang)}</span></h2>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
-          <p style={{ fontSize: 16, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", maxWidth: 560, margin: "0 auto" }}>A completely manual, fragmented process repeated from scratch for every single charter</p>
+          <p style={{ fontSize: 16, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", maxWidth: 560, margin: "0 auto" }}>{t("problemSub", lang)}</p>
         </div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
@@ -214,34 +219,34 @@ function ProblemSlide() {
   );
 }
 
-function SolutionSlide() {
+function SolutionSlide({ lang }) {
   const features = [
-    { title: "Smart Provision Builder", desc: "One unified catalog of vetted marine-grade suppliers. Build complete orders by category." },
-    { title: "Departure-Linked Scheduling", desc: "Input your departure. The app calculates delivery windows and cold-chain timing." },
-    { title: "Provision Templates", desc: "Save and reorder past setups with one tap. Your weekly Bahamas run? Two taps." },
-    { title: "Fleet Dashboard", desc: "All vessels, orders, spend, and delivery status in one centralized control panel." },
-    { title: "Customs Manifest Generator", desc: "Auto-generate CBP-compliant manifests from order data. Hours of paperwork eliminated." },
-    { title: "Guest Profile System", desc: "Dietary restrictions and allergies flagged in real time during ordering." },
+    { title: t("feat1Title", lang), desc: t("feat1Desc", lang) },
+    { title: t("feat2Title", lang), desc: t("feat2Desc", lang) },
+    { title: t("feat3Title", lang), desc: t("feat3Desc", lang) },
+    { title: t("feat4Title", lang), desc: t("feat4Desc", lang) },
+    { title: t("feat5Title", lang), desc: t("feat5Desc", lang) },
+    { title: t("feat6Title", lang), desc: t("feat6Desc", lang) },
   ];
   return (
     <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
       <div className="solution-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, alignItems: "center" }}>
         <div>
           <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
-            <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Solution</span>
+            <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>{t("theSolution", lang)}</span>
           </div>
           <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-            <h2 className="pitch-h2" style={{ fontSize: 38, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 16px 0", lineHeight: 1.2 }}>One platform for <span style={{ color: COLORS.accent, fontStyle: "italic" }}>everything</span></h2>
+            <h2 className="pitch-h2" style={{ fontSize: 38, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 16px 0", lineHeight: 1.2 }}>{t("solutionH2a", lang)}<span style={{ color: COLORS.accent, fontStyle: "italic" }}>{t("solutionH2b", lang)}</span></h2>
           </div>
           <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
-            <p style={{ fontSize: 15, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: "0 0 28px 0" }}>Yacht Provisions Pro connects captains, crew, and owners with vetted suppliers for bulk, temperature-controlled, dockside delivery — replacing the chaos with a single coordinated workflow.</p>
+            <p style={{ fontSize: 15, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: "0 0 28px 0" }}>{t("solutionDesc", lang)}</p>
           </div>
           <div className="slide-enter" style={{ animationDelay: "0.4s" }}>
             <div style={{ display: "flex", gap: 16, padding: "16px 20px", borderRadius: 14, background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.15)" }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: COLORS.success, fontSize: 12 }}>ROI</div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.success, fontFamily: "'DM Sans', sans-serif" }}>4+ hours saved per provision run</div>
-                <div style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>From scattered calls to a single, coordinated dockside delivery</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.success, fontFamily: "'DM Sans', sans-serif" }}>{t("roiTitle", lang)}</div>
+                <div style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 2 }}>{t("roiSub", lang)}</div>
               </div>
             </div>
           </div>
@@ -260,22 +265,22 @@ function SolutionSlide() {
   );
 }
 
-function MarketSlide() {
+function MarketSlide({ lang }) {
   return (
     <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
       <div style={{ textAlign: "center", marginBottom: 48 }}>
         <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
-          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(26,107,122,0.15)", border: "1px solid rgba(42,141,156,0.25)", color: COLORS.seaLight, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>The Market</span>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(26,107,122,0.15)", border: "1px solid rgba(42,141,156,0.25)", color: COLORS.seaLight, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>{t("theMarket", lang)}</span>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>A <span style={{ color: COLORS.accent, fontStyle: "italic" }}>$60 billion</span> industry with zero technology</h2>
+          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 12px 0" }}>{t("marketH2a", lang)}<span style={{ color: COLORS.accent, fontStyle: "italic" }}>{t("marketH2b", lang)}</span>{t("marketH2c", lang)}</h2>
         </div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginBottom: 36 }}>
         {[
-          { label: "TAM — Global", value: "$60B", desc: "Charter + private vessels + superyacht management + marine hospitality", color: COLORS.accent, bg: `rgba(201,169,110,0.08)`, border: `${COLORS.accent}22` },
-          { label: "SAM — South Florida", value: "$500M+", desc: "100,000+ registered vessels · Ft. Lauderdale, Miami, Palm Beach, the Keys", color: COLORS.seaLight, bg: "rgba(26,107,122,0.1)", border: `${COLORS.sea}33` },
-          { label: "SOM — Year 1–3", value: "$10–15M", desc: "2–3% capture rate → $1.5–3M net revenue at 15–20% take rate", color: COLORS.success, bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
+          { label: t("tamLabel", lang), value: "$60B", desc: t("tamDesc", lang), color: COLORS.accent, bg: `rgba(201,169,110,0.08)`, border: `${COLORS.accent}22` },
+          { label: t("samLabel", lang), value: "$500M+", desc: t("samDesc", lang), color: COLORS.seaLight, bg: "rgba(26,107,122,0.1)", border: `${COLORS.sea}33` },
+          { label: t("somLabel", lang), value: "$10–15M", desc: t("somDesc", lang), color: COLORS.success, bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
         ].map((item, i) => (
           <div key={i} className="slide-enter" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
             <div style={{ padding: 28, borderRadius: 18, textAlign: "center", background: `linear-gradient(160deg, ${item.bg} 0%, transparent 100%)`, border: `1px solid ${item.border}`, position: "relative", overflow: "hidden" }}>
@@ -290,10 +295,10 @@ function MarketSlide() {
       <div className="slide-enter" style={{ animationDelay: "0.75s" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, padding: 20, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
           {[
-            { val: "#1", label: "Ft. Lauderdale: largest in-water boat show in the world" },
-            { val: "100K+", label: "Registered recreational vessels in South Florida alone" },
-            { val: "0", label: "Purpose-built tech platforms for yacht provisioning" },
-            { val: "18–24mo", label: "Estimated time to break-even at $4–5M annual GMV" },
+            { val: "#1", label: t("mktStat1", lang) },
+            { val: "100K+", label: t("mktStat2", lang) },
+            { val: "0", label: t("mktStat3", lang) },
+            { val: "18–24mo", label: t("mktStat4", lang) },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: "center", padding: "4px 8px" }}>
               <div style={{ fontSize: 22, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif", marginBottom: 4 }}>{item.val}</div>
@@ -306,26 +311,26 @@ function MarketSlide() {
   );
 }
 
-function RevenueSlide() {
+function RevenueSlide({ lang }) {
   const streams = [
-    { name: "Transaction Commission", rate: "15–22%", example: "$1,440–$3,600 per order", desc: "Core engine. Markup on all goods ordered through the platform.", color: COLORS.accent },
-    { name: "Delivery Coordination Fee", rate: "$75–$200", example: "Per delivery", desc: "Flat fee covering dockside agent and cold-chain handling.", color: COLORS.seaLight },
-    { name: "Fleet Account SaaS", rate: "$300–$800/mo", example: "80%+ margins", desc: "Recurring revenue from management companies. Dashboard, billing, priority.", color: COLORS.success },
-    { name: "Supplier Listing Fees", rate: "$200–$500/mo", example: "Per vendor", desc: "Premium placement in catalog for access to high-spend captain demographic.", color: COLORS.warning },
-    { name: "White-Glove Concierge", rate: "$500–$1,500", example: "Per provision event", desc: "Human agent handles everything for superyacht and UHNW clients.", color: "#C084FC" },
-    { name: "Charter Broker Partnerships", rate: "Wholesale", example: "Fulfillment layer", desc: "Brokers include provisioning in charter contracts. We fulfill.", color: "#60A5FA" },
+    { name: t("rev1Name", lang), rate: "15–22%", example: t("rev1Ex", lang), desc: t("rev1Desc", lang), color: COLORS.accent },
+    { name: t("rev2Name", lang), rate: "$75–$200", example: t("rev2Ex", lang), desc: t("rev2Desc", lang), color: COLORS.seaLight },
+    { name: t("rev3Name", lang), rate: "$300–$800/mo", example: t("rev3Ex", lang), desc: t("rev3Desc", lang), color: COLORS.success },
+    { name: t("rev4Name", lang), rate: "$200–$500/mo", example: t("rev4Ex", lang), desc: t("rev4Desc", lang), color: COLORS.warning },
+    { name: t("rev5Name", lang), rate: "$500–$1,500", example: t("rev5Ex", lang), desc: t("rev5Desc", lang), color: "#C084FC" },
+    { name: t("rev6Name", lang), rate: "Wholesale", example: t("rev6Ex", lang), desc: t("rev6Desc", lang), color: "#60A5FA" },
   ];
   return (
     <div className="pitch-slide-content" style={{ maxWidth: 1060, width: "100%", padding: "0 48px" }}>
       <div style={{ textAlign: "center", marginBottom: 40 }}>
         <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
-          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>Revenue Engine</span>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, color: COLORS.accent, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>{t("revenueEngine", lang)}</span>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
-          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 8px 0" }}>Six revenue streams. <span style={{ color: COLORS.accent, fontStyle: "italic" }}>One platform.</span></h2>
+          <h2 className="pitch-h2" style={{ fontSize: 40, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 8px 0" }}>{t("revenueH2a", lang)}<span style={{ color: COLORS.accent, fontStyle: "italic" }}>{t("revenueH2b", lang)}</span></h2>
         </div>
         <div className="slide-enter" style={{ animationDelay: "0.3s" }}>
-          <p style={{ fontSize: 14, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>Multi-stream model with both transactional and recurring revenue</p>
+          <p style={{ fontSize: 14, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{t("revenueSub", lang)}</p>
         </div>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 14 }}>
@@ -345,10 +350,10 @@ function RevenueSlide() {
       <div className="slide-enter" style={{ animationDelay: "0.85s", marginTop: 20 }}>
         <div className="revenue-summary-bar" style={{ display: "flex", justifyContent: "center", gap: 36, padding: "16px 28px", borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.accent}08, ${COLORS.sea}08)`, border: `1px solid ${COLORS.glassBorder}`, flexWrap: "wrap" }}>
           {[
-            { label: "Avg Order Value", value: "$5K–$15K" },
-            { label: "Revenue Per Order", value: "$1,050–$2,850" },
-            { label: "100 Captains Year 1", value: "$2–5M GMV" },
-            { label: "Seed Round", value: "$750K–$1.5M" },
+            { label: t("revAvgOrder", lang), value: "$5K–$15K" },
+            { label: t("revPerOrder", lang), value: "$1,050–$2,850" },
+            { label: t("revCaptains", lang), value: "$2–5M GMV" },
+            { label: t("revSeedRound", lang), value: "$750K–$1.5M" },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: "center" }}>
               <div className="revenue-stat-value" style={{ fontSize: 18, fontWeight: 300, color: COLORS.accent, fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
@@ -431,15 +436,15 @@ function AnimatedNumber({ value, prefix = "" }) {
   return <>{prefix}{display.toLocaleString()}</>;
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, lang = "en" }) {
   const config = {
-    delivering: { bg: "rgba(52,211,153,0.15)", color: COLORS.success, label: "Delivering", dot: true },
-    complete: { bg: "rgba(201,169,110,0.15)", color: COLORS.accent, label: "Complete" },
-    pending: { bg: "rgba(251,191,36,0.15)", color: COLORS.warning, label: "Pending" },
-    "In Progress": { bg: "rgba(52,211,153,0.15)", color: COLORS.success, label: "In Progress", dot: true },
-    Complete: { bg: "rgba(201,169,110,0.15)", color: COLORS.accent, label: "Complete" },
-    "Awaiting Approval": { bg: "rgba(251,191,36,0.15)", color: COLORS.warning, label: "Awaiting Approval" },
-    "Not Started": { bg: "rgba(107,114,128,0.15)", color: COLORS.silver, label: "Not Started" },
+    delivering: { bg: "rgba(52,211,153,0.15)", color: COLORS.success, label: t("statusDelivering", lang), dot: true },
+    complete: { bg: "rgba(201,169,110,0.15)", color: COLORS.accent, label: t("statusComplete", lang) },
+    pending: { bg: "rgba(251,191,36,0.15)", color: COLORS.warning, label: t("statusPending", lang) },
+    "In Progress": { bg: "rgba(52,211,153,0.15)", color: COLORS.success, label: t("statusInProgress", lang), dot: true },
+    Complete: { bg: "rgba(201,169,110,0.15)", color: COLORS.accent, label: t("statusComplete", lang) },
+    "Awaiting Approval": { bg: "rgba(251,191,36,0.15)", color: COLORS.warning, label: t("statusAwaiting", lang) },
+    "Not Started": { bg: "rgba(107,114,128,0.15)", color: COLORS.silver, label: t("statusNotStarted", lang) },
   };
   const c = config[status] || config.pending;
   return (
@@ -450,13 +455,13 @@ function StatusBadge({ status }) {
   );
 }
 
-function SideNav({ active, setActive }) {
+function SideNav({ active, setActive, lang }) {
   const items = [
-    { id: "dashboard", icon: "⬡", label: "Bridge" },
-    { id: "provision", icon: "◈", label: "Provision" },
-    { id: "fleet", icon: "⎔", label: "Fleet" },
-    { id: "orders", icon: "☰", label: "Orders" },
-    { id: "suppliers", icon: "◎", label: "Suppliers" },
+    { id: "dashboard", icon: "⬡", label: t("navBridge", lang) },
+    { id: "provision", icon: "◈", label: t("navProvision", lang) },
+    { id: "fleet", icon: "⎔", label: t("navFleet", lang) },
+    { id: "orders", icon: "☰", label: t("navOrders", lang) },
+    { id: "suppliers", icon: "◎", label: t("navSuppliers", lang) },
   ];
   return (
     <>
@@ -487,7 +492,7 @@ function SideNav({ active, setActive }) {
   );
 }
 
-function Header({ title, subtitle }) {
+function Header({ title, subtitle, lang, setLang }) {
   return (
     <header className="app-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, gap: 16, flexWrap: "wrap" }}>
       <div style={{ minWidth: 0 }}>
@@ -496,25 +501,26 @@ function Header({ title, subtitle }) {
       </div>
       <div className="header-actions" style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
-          <input className="header-search" placeholder="Search vessels, orders..." style={{ width: "100%", maxWidth: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
+          <input className="header-search" placeholder={t("searchPlaceholder", lang)} style={{ width: "100%", maxWidth: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
           <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: COLORS.muted }}>⌕</span>
         </div>
+        {setLang && <LangToggle lang={lang} setLang={setLang} />}
         <button style={{ width: 40, height: 40, minWidth: 40, borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 16, cursor: "pointer", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>⚑<span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.danger }} /></button>
       </div>
     </header>
   );
 }
 
-function Dashboard({ setActive }) {
+function Dashboard({ setActive, lang, setLang }) {
   const stats = [
-    { label: "Active Orders", value: 12, change: "+3 today", icon: "◈" },
-    { label: "Monthly GMV", value: 284500, prefix: "$", change: "+18% vs Jan", icon: "◆" },
-    { label: "Fleet Accounts", value: 8, change: "+2 this month", icon: "⎔" },
-    { label: "Suppliers Online", value: 47, change: "98% fill rate", icon: "◎" },
+    { label: t("activeOrders", lang), value: 12, change: t("plus3Today", lang), icon: "◈" },
+    { label: t("monthlyGMV", lang), value: 284500, prefix: "$", change: t("plus18vsJan", lang), icon: "◆" },
+    { label: t("fleetAccounts", lang), value: 8, change: t("plus2Month", lang), icon: "⎔" },
+    { label: t("suppliersOnline", lang), value: 47, change: t("fillRate98", lang), icon: "◎" },
   ];
   return (
     <div className="fade-in">
-      <Header title="Bridge Overview" subtitle="Thursday, February 19, 2026 — Fort Lauderdale, FL" />
+      <Header title={t("bridgeOverview", lang)} subtitle={t("dashSubtitle", lang)} lang={lang} setLang={setLang} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 28 }}>
         {stats.map((s, i) => (
           <div key={i} className="card hover-lift" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, animationDelay: `${i * 0.08}s` }}>
@@ -530,30 +536,30 @@ function Dashboard({ setActive }) {
       <div className="dashboard-grid">
         <div className="card" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>Recent Orders</h3>
-            <button onClick={() => setActive("orders")} style={{ fontSize: 12, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>View All →</button>
+            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{t("recentOrders", lang)}</h3>
+            <button onClick={() => setActive("orders")} style={{ fontSize: 12, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>{t("viewAll", lang)}</button>
           </div>
           {ORDERS_RECENT.map((o) => (
             <div key={o.id} className="hover-row dashboard-order-row" style={{ display: "grid", gridTemplateColumns: "90px 1fr 80px 100px 100px", alignItems: "center", padding: "14px 12px", borderRadius: 10, gap: 12 }}>
               <span className="order-id" style={{ fontSize: 12, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
               <span className="order-vessel" style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{o.vessel}</span>
-              <span className="order-items" style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{o.items} items</span>
+              <span className="order-items" style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{o.items} {t("items", lang)}</span>
               <span className="order-total" style={{ fontSize: 13, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", textAlign: "right" }}>${o.total.toLocaleString()}</span>
-              <div className="order-status" style={{ display: "flex", justifyContent: "flex-end" }}><StatusBadge status={o.status} /></div>
+              <div className="order-status" style={{ display: "flex", justifyContent: "flex-end" }}><StatusBadge status={o.status} lang={lang} /></div>
             </div>
           ))}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div className="card" style={{ padding: 24, borderRadius: 16, background: `linear-gradient(135deg, ${COLORS.accent}18, ${COLORS.sea}18)`, border: `1px solid ${COLORS.glassBorder}` }}>
-            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>Quick Actions</h3>
-            {[{ label: "New Provision Order", icon: "＋", action: () => setActive("provision") }, { label: "Reorder Last Template", icon: "↻" }, { label: "Generate Customs Manifest", icon: "☷" }].map((a, i) => (
+            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>{t("quickActions", lang)}</h3>
+            {[{ label: t("newProvisionOrder", lang), icon: "＋", action: () => setActive("provision") }, { label: t("reorderTemplate", lang), icon: "↻" }, { label: t("genManifest", lang), icon: "☷" }].map((a, i) => (
               <button key={i} onClick={a.action} className="hover-lift" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, textAlign: "left", width: "100%", marginBottom: 10 }}>
                 <span style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", color: COLORS.accent, fontSize: 16 }}>{a.icon}</span>{a.label}
               </button>
             ))}
           </div>
           <div className="card" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, flex: 1 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>Upcoming Departures</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: "0 0 16px 0" }}>{t("upcomingDepartures", lang)}</h3>
             {FLEET.filter(f => f.departure).slice(0, 3).map((f, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: COLORS.accentDim, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: COLORS.accent }}>VSL</div>
@@ -571,7 +577,7 @@ function Dashboard({ setActive }) {
   );
 }
 
-function ProvisionBuilder() {
+function ProvisionBuilder({ lang, setLang }) {
   const [selectedCat, setSelectedCat] = useState("seafood");
   const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
@@ -584,15 +590,15 @@ function ProvisionBuilder() {
 
   return (
     <div className="fade-in">
-      <Header title="Smart Provision Builder" subtitle="Build your provision order by category — vetted suppliers only" />
+      <Header title={t("smartProvBuilder", lang)} subtitle={t("provBuilderSub", lang)} lang={lang} setLang={setLang} />
       <div className="provision-grid">
         <div className="card provision-categories" style={{ padding: 16, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, alignSelf: "start", position: "sticky", top: 20 }}>
-          <div className="categories-label" style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "8px 12px", fontFamily: "'DM Sans', sans-serif" }}>Categories</div>
+          <div className="categories-label" style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "8px 12px", fontFamily: "'DM Sans', sans-serif" }}>{t("categories", lang)}</div>
           {CATEGORIES.map((cat) => {
             const abbrev = cat.label.split(" ").map(word => word[0]).join("").slice(0, 2).toUpperCase();
             return (
               <button key={cat.id} onClick={() => setSelectedCat(cat.id)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, border: "none", background: selectedCat === cat.id ? COLORS.accentDim : "transparent", color: selectedCat === cat.id ? COLORS.accent : COLORS.silver, cursor: "pointer", textAlign: "left", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: selectedCat === cat.id ? 600 : 400 }}>
-                <span style={{ width: 28, height: 28, borderRadius: 8, background: COLORS.accentDim, color: COLORS.accent, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 11 }}>{abbrev}</span><span style={{ flex: 1 }}>{cat.label}</span><span style={{ fontSize: 11, color: COLORS.muted }}>{cat.count}</span>
+                <span style={{ width: 28, height: 28, borderRadius: 8, background: COLORS.accentDim, color: COLORS.accent, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 11 }}>{abbrev}</span><span style={{ flex: 1 }}>{tCat(cat.id, lang)}</span><span style={{ fontSize: 11, color: COLORS.muted }}>{cat.count}</span>
               </button>
             );
           })}
@@ -600,33 +606,33 @@ function ProvisionBuilder() {
         <div>
           <div className="card" style={{ display: "flex", alignItems: "center", gap: 20, padding: "16px 20px", borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.accent}10, ${COLORS.sea}10)`, border: `1px solid ${COLORS.glassBorder}`, marginBottom: 20, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Vessel</span>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{t("vessel", lang)}</span>
               <span style={{ padding: "6px 14px", borderRadius: 8, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>M/Y Serenity — 82ft Sunseeker</span>
             </div>
             <div style={{ width: 1, height: 24, background: COLORS.glassBorder }} />
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Departure</span>
-              <span style={{ padding: "6px 14px", borderRadius: 8, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.accent, fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>Tomorrow — 6:00 AM</span>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{t("departure", lang)}</span>
+              <span style={{ padding: "6px 14px", borderRadius: 8, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.accent, fontSize: 13, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>{t("tomorrowTime", lang)}</span>
             </div>
             <div style={{ flex: 1 }} />
-            <span style={{ fontSize: 11, color: COLORS.success, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>● Delivery window confirmed: Today 2:00–4:00 PM</span>
+            <span style={{ fontSize: 11, color: COLORS.success, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>{t("deliveryConfirmed", lang)}</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)", marginBottom: 20 }}>
             <span style={{ fontSize: 16, fontWeight: 800, color: COLORS.warning }}>!</span>
-            <span style={{ fontSize: 12, color: COLORS.warning, fontFamily: "'DM Sans', sans-serif" }}><strong>Guest Profile Alert:</strong> Guest #2 (Sarah Mitchell) — Shellfish allergy, Gluten-free.</span>
+            <span style={{ fontSize: 12, color: COLORS.warning, fontFamily: "'DM Sans', sans-serif" }}><strong>{t("guestAlert", lang)}</strong> {t("guestAlertDetail", lang)}</span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
             {products.map((p, i) => {
               const inCart = cart[p.id];
               return (
                 <div key={p.id} className="card hover-lift" style={{ padding: 20, borderRadius: 14, background: COLORS.glass, border: `1px solid ${inCart ? COLORS.accent + "44" : COLORS.glassBorder}`, animationDelay: `${i * 0.05}s` }}>
-                  {p.tag && <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 6, background: p.tag.includes("Premium") ? COLORS.accentDim : p.tag === "Chef's Pick" ? "rgba(26,107,122,0.2)" : "rgba(107,114,128,0.15)", color: p.tag.includes("Premium") ? COLORS.accent : p.tag === "Chef's Pick" ? COLORS.seaLight : COLORS.silver, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, marginBottom: 10, fontFamily: "'DM Sans', sans-serif", textTransform: "uppercase" }}>{p.tag}</span>}
+                  {p.tag && <span style={{ display: "inline-block", padding: "3px 10px", borderRadius: 6, background: p.tag.includes("Premium") ? COLORS.accentDim : p.tag === "Chef's Pick" ? "rgba(26,107,122,0.2)" : "rgba(107,114,128,0.15)", color: p.tag.includes("Premium") ? COLORS.accent : p.tag === "Chef's Pick" ? COLORS.seaLight : COLORS.silver, fontSize: 10, fontWeight: 700, letterSpacing: 0.5, marginBottom: 10, fontFamily: "'DM Sans', sans-serif", textTransform: "uppercase" }}>{tTag(p.tag, lang)}</span>}
                   <h4 style={{ fontSize: 15, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", margin: "0 0 6px 0" }}>{p.name}</h4>
                   <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>{p.supplier} · {"★".repeat(Math.floor(p.rating))} {p.rating}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                     <div>
                       <div style={{ fontSize: 22, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>${p.price.toFixed(2)}</div>
-                      <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{p.unit}</div>
+                      <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{tUnit(p.unit, lang)}</div>
                     </div>
                     {inCart ? (
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -635,7 +641,7 @@ function ProvisionBuilder() {
                         <button onClick={() => updateQty(p.id, 1)} style={{ width: 28, height: 28, borderRadius: 8, border: `1px solid ${COLORS.accent}44`, background: COLORS.accentDim, color: COLORS.accent, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
                       </div>
                     ) : (
-                      <button onClick={() => addToCart(p)} className="hover-lift" style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Add</button>
+                      <button onClick={() => addToCart(p)} className="hover-lift" style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("addBtn", lang)}</button>
                     )}
                   </div>
                 </div>
@@ -645,14 +651,14 @@ function ProvisionBuilder() {
           {cartCount > 0 && (
             <div onClick={() => setShowCart(!showCart)} className="hover-lift cart-fab" style={{ position: "fixed", bottom: 28, right: 28, display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", borderRadius: 18, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, cursor: "pointer", boxShadow: "0 8px 32px rgba(201,169,110,0.4)", zIndex: 200 }}>
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,0,0,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13 }}>{cartCount}</div>
-              <div><div className="cart-fab-text" style={{ fontSize: 14, fontWeight: 700 }}>View Provision Cart</div><div style={{ fontSize: 12, opacity: 0.8 }}>${cartTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div></div>
+              <div><div className="cart-fab-text" style={{ fontSize: 14, fontWeight: 700 }}>{t("viewCart", lang)}</div><div style={{ fontSize: 12, opacity: 0.8 }}>${cartTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div></div>
               <span style={{ fontSize: 18, marginLeft: 4 }}>→</span>
             </div>
           )}
           {showCart && cartCount > 0 && (
             <div className="cart-panel" style={{ position: "fixed", top: 0, right: 0, width: 420, height: "100vh", background: COLORS.deepNavy, borderLeft: `1px solid ${COLORS.glassBorder}`, zIndex: 300, padding: 28, overflowY: "auto", animation: "slideInRight 0.3s ease" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>Provision Cart</h3>
+                <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{t("provisionCart", lang)}</h3>
                 <button onClick={() => setShowCart(false)} style={{ background: "none", border: "none", color: COLORS.silver, cursor: "pointer", fontSize: 20 }}>✕</button>
               </div>
               {cartItems.map(([id, item]) => (
@@ -669,10 +675,10 @@ function ProvisionBuilder() {
                 </div>
               ))}
               <div style={{ marginTop: 24, padding: "20px 0", borderTop: `1px solid ${COLORS.glassBorder}` }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>Subtotal</span><span style={{ fontSize: 13, color: COLORS.white }}>${cartTotal.toFixed(2)}</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>Coordination Fee</span><span style={{ fontSize: 13, color: COLORS.white }}>$150.00</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.white }}>Total</span><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.accent }}>${(cartTotal + 150).toFixed(2)}</span></div>
-                <button className="hover-lift" style={{ width: "100%", padding: "14px 0", borderRadius: 14, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>Schedule Dockside Delivery →</button>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>{t("subtotal", lang)}</span><span style={{ fontSize: 13, color: COLORS.white }}>${cartTotal.toFixed(2)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 13, color: COLORS.muted }}>{t("coordFee", lang)}</span><span style={{ fontSize: 13, color: COLORS.white }}>$150.00</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.white }}>{t("total", lang)}</span><span style={{ fontSize: 15, fontWeight: 700, color: COLORS.accent }}>${(cartTotal + 150).toFixed(2)}</span></div>
+                <button className="hover-lift" style={{ width: "100%", padding: "14px 0", borderRadius: 14, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("scheduleDelivery", lang)}</button>
               </div>
             </div>
           )}
@@ -682,10 +688,10 @@ function ProvisionBuilder() {
   );
 }
 
-function FleetView() {
+function FleetView({ lang, setLang }) {
   return (
     <div className="fade-in">
-      <Header title="Fleet Dashboard" subtitle="Manage all vessels and their provisioning status" />
+      <Header title={t("fleetDashboard", lang)} subtitle={t("fleetSub", lang)} lang={lang} setLang={setLang} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
         {FLEET.map((v, i) => (
           <div key={i} className="card hover-lift" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, animationDelay: `${i * 0.08}s` }}>
@@ -694,19 +700,19 @@ function FleetView() {
                 <h3 style={{ fontSize: 18, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{v.name}</h3>
                 <div style={{ fontSize: 12, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>{v.length} {v.type} · {v.location}</div>
               </div>
-              <StatusBadge status={v.orderStatus} />
+              <StatusBadge status={v.orderStatus} lang={lang} />
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-              <div style={{ padding: 12, borderRadius: 10, background: COLORS.deepNavy }}><div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>Captain</div><div style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>{v.captain}</div></div>
-              <div style={{ padding: 12, borderRadius: 10, background: COLORS.deepNavy }}><div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>Departure</div><div style={{ fontSize: 13, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>{v.departure}</div></div>
+              <div style={{ padding: 12, borderRadius: 10, background: COLORS.deepNavy }}><div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{t("captain", lang)}</div><div style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>{v.captain}</div></div>
+              <div style={{ padding: 12, borderRadius: 10, background: COLORS.deepNavy }}><div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{t("departure", lang)}</div><div style={{ fontSize: 13, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>{v.departure}</div></div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ fontSize: 11, color: COLORS.muted }}>Provision Progress</span><span style={{ fontSize: 11, color: COLORS.accent, fontWeight: 700 }}>{v.progress}%</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}><span style={{ fontSize: 11, color: COLORS.muted }}>{t("provisionProgress", lang)}</span><span style={{ fontSize: 11, color: COLORS.accent, fontWeight: 700 }}>{v.progress}%</span></div>
               <div style={{ height: 6, borderRadius: 3, background: COLORS.deepNavy, overflow: "hidden" }}><div style={{ height: "100%", borderRadius: 3, background: v.progress === 100 ? COLORS.accent : `linear-gradient(90deg, ${COLORS.sea}, ${COLORS.seaLight})`, width: `${v.progress}%`, transition: "width 1s ease" }} /></div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 20, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>{v.orderTotal > 0 ? `$${v.orderTotal.toLocaleString()}` : "—"}</span>
-              <button style={{ padding: "8px 16px", borderRadius: 10, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.accent, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{v.progress === 0 ? "Start Order" : "View Details"} →</button>
+              <button style={{ padding: "8px 16px", borderRadius: 10, border: `1px solid ${COLORS.glassBorder}`, background: "transparent", color: COLORS.accent, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{v.progress === 0 ? t("startOrder", lang) : t("viewDetails", lang)} →</button>
             </div>
           </div>
         ))}
@@ -715,20 +721,20 @@ function FleetView() {
   );
 }
 
-function OrdersView() {
+function OrdersView({ lang, setLang }) {
   const [filter, setFilter] = useState("all");
   const filtered = filter === "all" ? ORDERS_RECENT : ORDERS_RECENT.filter(o => o.status === filter);
   return (
     <div className="fade-in">
-      <Header title="Order Management" subtitle="Track and manage all provision orders across your fleet" />
+      <Header title={t("orderManagement", lang)} subtitle={t("ordersSub", lang)} lang={lang} setLang={setLang} />
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-        {["all", "delivering", "pending", "complete"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${filter === f ? COLORS.accent : COLORS.glassBorder}`, background: filter === f ? COLORS.accentDim : "transparent", color: filter === f ? COLORS.accent : COLORS.silver, fontSize: 12, fontWeight: 600, cursor: "pointer", textTransform: "capitalize" }}>{f}</button>
+        {[{ key: "all", label: t("filterAll", lang) }, { key: "delivering", label: t("filterDelivering", lang) }, { key: "pending", label: t("filterPending", lang) }, { key: "complete", label: t("filterComplete", lang) }].map(f => (
+          <button key={f.key} onClick={() => setFilter(f.key)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${filter === f.key ? COLORS.accent : COLORS.glassBorder}`, background: filter === f.key ? COLORS.accentDim : "transparent", color: filter === f.key ? COLORS.accent : COLORS.silver, fontSize: 12, fontWeight: 600, cursor: "pointer", textTransform: "capitalize" }}>{f.label}</button>
         ))}
       </div>
       <div className="card orders-table-desktop" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
         <div className="table-header-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px 80px 120px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
-          {["Order ID", "Vessel", "Date", "Items", "Total", "Status"].map(h => (
+          {[t("thOrderId", lang), t("thVessel", lang), t("thDate", lang), t("thItems", lang), t("thTotal", lang), t("thStatus", lang)].map(h => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2 }}>{h}</span>
           ))}
         </div>
@@ -739,7 +745,7 @@ function OrdersView() {
             <span style={{ fontSize: 13, color: COLORS.muted }}>{o.date}</span>
             <span style={{ fontSize: 13, color: COLORS.muted }}>{o.items}</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>${o.total.toLocaleString()}</span>
-            <StatusBadge status={o.status} />
+            <StatusBadge status={o.status} lang={lang} />
           </div>
         ))}
       </div>
@@ -749,11 +755,11 @@ function OrdersView() {
           <div key={o.id} className="card" style={{ padding: 16, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
-              <StatusBadge status={o.status} />
+              <StatusBadge status={o.status} lang={lang} />
             </div>
             <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white, marginBottom: 6 }}>{o.vessel}</div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 12, color: COLORS.muted }}>{o.date} · {o.items} items</span>
+              <span style={{ fontSize: 12, color: COLORS.muted }}>{o.date} · {o.items} {t("items", lang)}</span>
               <span style={{ fontSize: 15, fontWeight: 700, color: COLORS.white }}>${o.total.toLocaleString()}</span>
             </div>
           </div>
@@ -763,7 +769,7 @@ function OrdersView() {
   );
 }
 
-function SuppliersView() {
+function SuppliersView({ lang, setLang }) {
   const suppliers = [
     { name: "Ocean Prime Seafood", category: "Seafood", rating: 4.9, orders: 234, revenue: "$142K", fill: "99.2%", status: "Premium" },
     { name: "Prestige Wine & Spirits", category: "Beverages", rating: 5.0, orders: 187, revenue: "$298K", fill: "98.8%", status: "Premium" },
@@ -774,9 +780,9 @@ function SuppliersView() {
   ];
   return (
     <div className="fade-in">
-      <Header title="Supplier Network" subtitle="47 vetted suppliers across 10 categories" />
+      <Header title={t("supplierNetwork", lang)} subtitle={t("suppliersSub", lang)} lang={lang} setLang={setLang} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 28 }}>
-        {[{ label: "Active Suppliers", value: "47", sub: "10 categories" }, { label: "Avg Fill Rate", value: "98.4%", sub: "+0.3% vs last month" }, { label: "Supplier GMV", value: "$830K", sub: "Last 30 days" }].map((s, i) => (
+        {[{ label: t("activeSuppliers", lang), value: "47", sub: t("tenCategories", lang) }, { label: t("avgFillRate", lang), value: "98.4%", sub: t("vsLastMonth", lang) }, { label: t("supplierGMV", lang), value: "$830K", sub: t("last30Days", lang) }].map((s, i) => (
           <div key={i} className="card" style={{ padding: 20, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{s.label}</div>
             <div style={{ fontSize: 26, fontWeight: 300, color: COLORS.white, fontFamily: "'Playfair Display', serif" }}>{s.value}</div>
@@ -786,19 +792,19 @@ function SuppliersView() {
       </div>
       <div className="card suppliers-table-desktop" style={{ borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden", overflowX: "auto" }}>
         <div className="table-header-row" style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "14px 24px", borderBottom: `1px solid ${COLORS.glassBorder}` }}>
-          {["Supplier", "Category", "Rating", "Orders", "Revenue", "Fill Rate", "Tier"].map(h => (
+          {[t("thSupplier", lang), t("thCategory", lang), t("thRating", lang), t("thOrders", lang), t("thRevenue", lang), t("thFillRate", lang), t("thTier", lang)].map(h => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.2 }}>{h}</span>
           ))}
         </div>
         {suppliers.map((s, i) => (
           <div key={i} className="hover-row table-data-row" style={{ display: "grid", gridTemplateColumns: "1fr 120px 80px 80px 100px 80px 120px", padding: "16px 24px", borderBottom: `1px solid ${COLORS.glassBorder}22`, alignItems: "center", cursor: "pointer" }}>
             <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.name}</span>
-            <span style={{ fontSize: 12, color: COLORS.muted }}>{s.category}</span>
+            <span style={{ fontSize: 12, color: COLORS.muted }}>{tSupCat(s.category, lang)}</span>
             <span style={{ fontSize: 13, color: COLORS.accent, fontWeight: 600 }}>★ {s.rating}</span>
             <span style={{ fontSize: 13, color: COLORS.white }}>{s.orders}</span>
             <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.white }}>{s.revenue}</span>
             <span style={{ fontSize: 13, color: COLORS.success, fontWeight: 600 }}>{s.fill}</span>
-            <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{s.status}</span>
+            <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{tTier(s.status, lang)}</span>
           </div>
         ))}
       </div>
@@ -808,20 +814,20 @@ function SuppliersView() {
           <div key={i} className="card" style={{ padding: 16, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
               <span style={{ fontSize: 15, fontWeight: 600, color: COLORS.white }}>{s.name}</span>
-              <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{s.status}</span>
+              <span style={{ display: "inline-flex", padding: "4px 12px", borderRadius: 20, background: s.status.includes("Premium") ? COLORS.accentDim : "rgba(26,107,122,0.15)", color: s.status.includes("Premium") ? COLORS.accent : COLORS.seaLight, fontSize: 11, fontWeight: 600 }}>{tTier(s.status, lang)}</span>
             </div>
-            <div style={{ fontSize: 12, color: COLORS.muted, marginBottom: 10 }}>{s.category} · <span style={{ color: COLORS.accent }}>★ {s.rating}</span></div>
+            <div style={{ fontSize: 12, color: COLORS.muted, marginBottom: 10 }}>{tSupCat(s.category, lang)} · <span style={{ color: COLORS.accent }}>★ {s.rating}</span></div>
             <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
               <div style={{ flex: 1, padding: "8px 10px", borderRadius: 8, background: COLORS.deepNavy, textAlign: "center" }}>
-                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>Orders</div>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>{t("thOrders", lang)}</div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.orders}</div>
               </div>
               <div style={{ flex: 1, padding: "8px 10px", borderRadius: 8, background: COLORS.deepNavy, textAlign: "center" }}>
-                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>Revenue</div>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>{t("thRevenue", lang)}</div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.white }}>{s.revenue}</div>
               </div>
               <div style={{ flex: 1, padding: "8px 10px", borderRadius: 8, background: COLORS.deepNavy, textAlign: "center" }}>
-                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>Fill Rate</div>
+                <div style={{ fontSize: 10, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 }}>{t("thFillRate", lang)}</div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: COLORS.success }}>{s.fill}</div>
               </div>
             </div>
@@ -833,26 +839,43 @@ function SuppliersView() {
 }
 
 /* ================================================================
+   LANG TOGGLE
+   ================================================================ */
+
+function LangToggle({ lang, setLang, style }) {
+  return (
+    <button onClick={() => setLang(lang === "en" ? "es" : "en")} style={{ display: "inline-flex", alignItems: "center", gap: 0, borderRadius: 20, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, cursor: "pointer", padding: 0, fontFamily: "'DM Sans', sans-serif", backdropFilter: "blur(10px)", ...style }}>
+      <span style={{ padding: "5px 10px", borderRadius: "20px 0 0 20px", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, background: lang === "en" ? COLORS.accentDim : "transparent", color: lang === "en" ? COLORS.accent : COLORS.muted, transition: "all 0.2s" }}>EN</span>
+      <span style={{ padding: "5px 10px", borderRadius: "0 20px 20px 0", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, background: lang === "es" ? COLORS.accentDim : "transparent", color: lang === "es" ? COLORS.accent : COLORS.muted, transition: "all 0.2s" }}>ES</span>
+    </button>
+  );
+}
+
+/* ================================================================
    ROOT
    ================================================================ */
 
 export default function YachtProvisionsPro() {
   const [showPitch, setShowPitch] = useState(true);
   const [activePage, setActivePage] = useState("dashboard");
+  const [lang, setLang] = useState(() => {
+    try { return localStorage.getItem("ypp-lang") || "en"; } catch { return "en"; }
+  });
+  useEffect(() => { try { localStorage.setItem("ypp-lang", lang); } catch {} }, [lang]);
 
   const renderPage = () => {
     switch (activePage) {
-      case "dashboard": return <Dashboard setActive={setActivePage} />;
-      case "provision": return <ProvisionBuilder />;
-      case "fleet": return <FleetView />;
-      case "orders": return <OrdersView />;
-      case "suppliers": return <SuppliersView />;
-      default: return <Dashboard setActive={setActivePage} />;
+      case "dashboard": return <Dashboard setActive={setActivePage} lang={lang} setLang={setLang} />;
+      case "provision": return <ProvisionBuilder lang={lang} setLang={setLang} />;
+      case "fleet": return <FleetView lang={lang} setLang={setLang} />;
+      case "orders": return <OrdersView lang={lang} setLang={setLang} />;
+      case "suppliers": return <SuppliersView lang={lang} setLang={setLang} />;
+      default: return <Dashboard setActive={setActivePage} lang={lang} setLang={setLang} />;
     }
   };
 
   return (
-    <>
+    <LangContext.Provider value={{ lang, setLang }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1001,7 +1024,7 @@ export default function YachtProvisionsPro() {
         }
       `}</style>
 
-      {showPitch && <PitchDeck onFinish={() => setShowPitch(false)} />}
+      {showPitch && <PitchDeck onFinish={() => setShowPitch(false)} lang={lang} setLang={setLang} />}
 
       {!showPitch && (
         <div style={{
@@ -1012,12 +1035,12 @@ export default function YachtProvisionsPro() {
           display: "flex",
           animation: "appReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both",
         }}>
-          <SideNav active={activePage} setActive={setActivePage} />
+          <SideNav active={activePage} setActive={setActivePage} lang={lang} />
           <main className="app-main" style={{ flex: 1, marginLeft: 72, padding: "28px 32px", minHeight: "100vh" }}>
             {renderPage()}
           </main>
         </div>
       )}
-    </>
+    </LangContext.Provider>
   );
 }
