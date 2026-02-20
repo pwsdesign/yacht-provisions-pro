@@ -287,6 +287,82 @@ const T = {
 
   // ===== ORDER DETAILS =====
   orderDetails: { en: "Order Details", es: "Detalles de la Orden" },
+
+  // ===== PROFILE MENU =====
+  profileMenu: { en: "Profile Menu", es: "Menú de Perfil" },
+  profile: { en: "Profile", es: "Perfil" },
+  account: { en: "Account", es: "Cuenta" },
+  billing: { en: "Billing", es: "Facturación" },
+  settings: { en: "Settings", es: "Configuración" },
+  helpSupport: { en: "Help & Support", es: "Ayuda y Soporte" },
+  replayPitch: { en: "Replay Pitch Deck", es: "Repetir Presentación" },
+  logOut: { en: "Log Out", es: "Cerrar Sesión" },
+  // Profile modal
+  profileTitle: { en: "Captain Profile", es: "Perfil del Capitán" },
+  profileName: { en: "James Richardson", es: "James Richardson" },
+  profileRole: { en: "Fleet Captain", es: "Capitán de Flota" },
+  profileEmail: { en: "j.richardson@meridianmarine.com", es: "j.richardson@meridianmarine.com" },
+  profileVessel: { en: "Primary Vessel", es: "Embarcación Principal" },
+  profileMemberSince: { en: "Member Since", es: "Miembro Desde" },
+  profilePhone: { en: "Phone", es: "Teléfono" },
+  // Account modal
+  accountTitle: { en: "Account", es: "Cuenta" },
+  planLabel: { en: "Current Plan", es: "Plan Actual" },
+  fleetPro: { en: "Fleet Pro", es: "Fleet Pro" },
+  planDesc: { en: "Unlimited orders · 10 vessels · Priority delivery · Customs manifests · Analytics dashboard", es: "Órdenes ilimitadas · 10 embarcaciones · Entrega prioritaria · Manifiestos de aduana · Panel de analíticas" },
+  accountStatus: { en: "Status", es: "Estado" },
+  accountActive: { en: "Active", es: "Activo" },
+  renewalDate: { en: "Renewal Date", es: "Fecha de Renovación" },
+  // Billing modal
+  billingTitle: { en: "Billing", es: "Facturación" },
+  paymentMethod: { en: "Payment Method", es: "Método de Pago" },
+  cardEnding: { en: "Visa ending in 4242", es: "Visa terminada en 4242" },
+  nextInvoice: { en: "Next Invoice", es: "Próxima Factura" },
+  invoiceHistory: { en: "Recent Invoices", es: "Facturas Recientes" },
+  // Settings modal
+  settingsTitle: { en: "Settings", es: "Configuración" },
+  notifPrefs: { en: "Notifications", es: "Notificaciones" },
+  emailNotifs: { en: "Email notifications", es: "Notificaciones por email" },
+  pushNotifs: { en: "Push notifications", es: "Notificaciones push" },
+  orderUpdates: { en: "Order status updates", es: "Actualizaciones de estado de órdenes" },
+  deliveryAlerts: { en: "Delivery alerts", es: "Alertas de entrega" },
+  defaultVessel: { en: "Default Vessel", es: "Embarcación Predeterminada" },
+  language: { en: "Language", es: "Idioma" },
+  save: { en: "Save", es: "Guardar" },
+  saved: { en: "Saved!", es: "¡Guardado!" },
+  // Help modal
+  helpTitle: { en: "Help & Support", es: "Ayuda y Soporte" },
+  helpEmail: { en: "support@yachtprovisionspro.com", es: "support@yachtprovisionspro.com" },
+  helpPhone: { en: "+1 (954) 555-0199", es: "+1 (954) 555-0199" },
+  helpHours: { en: "Mon–Sat 6AM–10PM EST", es: "Lun–Sáb 6AM–10PM EST" },
+  helpChat: { en: "Live Chat", es: "Chat en Vivo" },
+  helpDocs: { en: "Documentation", es: "Documentación" },
+  helpFaq: { en: "FAQ", es: "Preguntas Frecuentes" },
+
+  // ===== NOTIFICATIONS =====
+  notifications: { en: "Notifications", es: "Notificaciones" },
+  markAllRead: { en: "Mark all read", es: "Marcar como leídas" },
+  notif1: { en: "Delivery confirmed for M/Y Serenity — arriving 2:00 PM today", es: "Entrega confirmada para M/Y Serenity — llegando a las 2:00 PM hoy" },
+  notif2: { en: "New supplier added: Tropical Groves Miami (Produce)", es: "Nuevo proveedor añadido: Tropical Groves Miami (Frutas)" },
+  notif3: { en: "Order YPP-2847 status changed to Complete", es: "Orden YPP-2847 cambió a estado Completada" },
+  notif4: { en: "Guest profile updated: Sarah Mitchell — added gluten-free", es: "Perfil de invitado actualizado: Sarah Mitchell — añadido sin gluten" },
+  notifTime1: { en: "12 min ago", es: "hace 12 min" },
+  notifTime2: { en: "1 hour ago", es: "hace 1 hora" },
+  notifTime3: { en: "3 hours ago", es: "hace 3 horas" },
+  notifTime4: { en: "Yesterday", es: "Ayer" },
+  viewAllNotifs: { en: "View All Notifications", es: "Ver Todas las Notificaciones" },
+
+  // ===== SEARCH =====
+  searchResults: { en: "Quick Results", es: "Resultados Rápidos" },
+  noResults: { en: "No results found", es: "Sin resultados" },
+  searchProducts: { en: "Products", es: "Productos" },
+  searchVessels: { en: "Vessels", es: "Embarcaciones" },
+  searchOrders: { en: "Orders", es: "Órdenes" },
+
+  // ===== TOAST =====
+  templateLoaded: { en: "Template loaded into cart", es: "Plantilla cargada al carrito" },
+  settingsSaved: { en: "Settings saved successfully", es: "Configuración guardada exitosamente" },
+  loggedOut: { en: "You have been logged out", es: "Has cerrado sesión" },
 };
 
 export function t(key, lang) {

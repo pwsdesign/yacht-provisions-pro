@@ -594,7 +594,9 @@ function StatusBadge({ status, lang = "en" }) {
   );
 }
 
-function SideNav({ active, setActive, lang }) {
+function SideNav({ active, setActive, lang, setShowPitch, setToast }) {
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [activeModal, setActiveModal] = useState(null);
   const items = [
     { id: "dashboard", icon: "⬡", label: t("navBridge", lang) },
     { id: "provision", icon: "◈", label: t("navProvision", lang) },
@@ -602,6 +604,17 @@ function SideNav({ active, setActive, lang }) {
     { id: "orders", icon: "☰", label: t("navOrders", lang) },
     { id: "suppliers", icon: "◎", label: t("navSuppliers", lang) },
   ];
+
+  const profileMenuItems = [
+    { icon: "👤", label: t("profile", lang), action: () => { setActiveModal("profile"); setShowProfileMenu(false); } },
+    { icon: "⚙", label: t("account", lang), action: () => { setActiveModal("account"); setShowProfileMenu(false); } },
+    { icon: "💳", label: t("billing", lang), action: () => { setActiveModal("billing"); setShowProfileMenu(false); } },
+    { icon: "🔧", label: t("settings", lang), action: () => { setActiveModal("settings"); setShowProfileMenu(false); } },
+    { icon: "❓", label: t("helpSupport", lang), action: () => { setActiveModal("help"); setShowProfileMenu(false); } },
+    { icon: "▶", label: t("replayPitch", lang), action: () => { setShowPitch(true); setShowProfileMenu(false); } },
+    { icon: "↪", label: t("logOut", lang), action: () => { setToast(t("loggedOut", lang)); setShowPitch(true); setShowProfileMenu(false); } },
+  ];
+
   return (
     <>
       {/* Desktop sidebar */}
@@ -615,8 +628,22 @@ function SideNav({ active, setActive, lang }) {
           </button>
         ))}
         <div style={{ flex: 1 }} />
-        <div style={{ width: 36, height: 36, borderRadius: "50%", background: COLORS.midNavy, border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: COLORS.accent, fontWeight: 700, marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>JR</div>
+        <div style={{ position: "relative" }}>
+          <div onClick={() => setShowProfileMenu(!showProfileMenu)} style={{ width: 36, height: 36, borderRadius: "50%", background: COLORS.midNavy, border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: COLORS.accent, fontWeight: 700, marginBottom: 20, fontFamily: "'DM Sans', sans-serif", cursor: "pointer" }}>JR</div>
+          {showProfileMenu && (
+            <div style={{ position: "absolute", bottom: 60, left: 72, width: 220, borderRadius: 16, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 8, zIndex: 200, animation: "fadeInUp 0.2s ease both", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+              {profileMenuItems.map((item, i) => (
+                <button key={i} onClick={item.action} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 10, border: "none", background: "transparent", color: item.label === t("logOut", lang) ? COLORS.danger : COLORS.silver, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, textAlign: "left", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = COLORS.accentDim} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <span style={{ fontSize: 14, width: 20, textAlign: "center" }}>{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
+      {/* Profile menu backdrop (desktop) */}
+      {showProfileMenu && <div onClick={() => setShowProfileMenu(false)} style={{ position: "fixed", inset: 0, zIndex: 99 }} />}
       {/* Mobile bottom tab bar */}
       <nav className="bottom-nav-mobile" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: COLORS.deepNavy, borderTop: `1px solid ${COLORS.glassBorder}`, display: "none", justifyContent: "space-around", alignItems: "center", padding: "6px 0 env(safe-area-inset-bottom, 8px) 0" }}>
         {items.map((item) => (
@@ -627,11 +654,36 @@ function SideNav({ active, setActive, lang }) {
           </button>
         ))}
       </nav>
+      {/* Profile modals */}
+      <ProfileMenuModal activeModal={activeModal} setActiveModal={setActiveModal} lang={lang} setToast={setToast} />
     </>
   );
 }
 
-function Header({ title, subtitle, lang, setLang }) {
+function Header({ title, subtitle, lang, setLang, setActive, orders, setToast }) {
+  const [showNotifs, setShowNotifs] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  const notifications = [
+    { color: COLORS.success, msg: t("notif1", lang), time: t("notifTime1", lang) },
+    { color: "#60A5FA", msg: t("notif2", lang), time: t("notifTime2", lang) },
+    { color: COLORS.accent, msg: t("notif3", lang), time: t("notifTime3", lang) },
+    { color: "#C084FC", msg: t("notif4", lang), time: t("notifTime4", lang) },
+  ];
+
+  // Build search results
+  const searchResults = (() => {
+    if (!searchQuery || searchQuery.length < 2) return null;
+    const q = searchQuery.toLowerCase();
+    const allProducts = Object.values(PRODUCTS).flat();
+    const matchedProducts = allProducts.filter(p => p.name.toLowerCase().includes(q)).slice(0, 3);
+    const matchedVessels = FLEET.filter(v => v.name.toLowerCase().includes(q)).slice(0, 3);
+    const matchedOrders = (orders || []).filter(o => o.id.toLowerCase().includes(q) || o.vessel.toLowerCase().includes(q)).slice(0, 3);
+    if (matchedProducts.length === 0 && matchedVessels.length === 0 && matchedOrders.length === 0) return "empty";
+    return { products: matchedProducts, vessels: matchedVessels, orders: matchedOrders };
+  })();
+
   return (
     <header className="app-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, gap: 16, flexWrap: "wrap" }}>
       <div style={{ minWidth: 0 }}>
@@ -640,17 +692,92 @@ function Header({ title, subtitle, lang, setLang }) {
       </div>
       <div className="header-actions" style={{ display: "flex", gap: 10, alignItems: "center" }}>
         <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
-          <input className="header-search" placeholder={t("searchPlaceholder", lang)} style={{ width: "100%", maxWidth: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
+          <input className="header-search" placeholder={t("searchPlaceholder", lang)} value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setShowSearch(true); }} onFocus={() => setShowSearch(true)} style={{ width: "100%", maxWidth: 260, padding: "10px 16px 10px 38px", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }} />
           <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: COLORS.muted }}>⌕</span>
+          {/* Search dropdown */}
+          {showSearch && searchQuery.length >= 2 && searchResults && (
+            <>
+              <div onClick={() => setShowSearch(false)} style={{ position: "fixed", inset: 0, zIndex: 299 }} />
+              <div style={{ position: "absolute", top: 48, left: 0, right: 0, minWidth: 280, maxWidth: 360, borderRadius: 16, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 12, zIndex: 300, animation: "fadeInUp 0.2s ease both", boxShadow: "0 8px 32px rgba(0,0,0,0.4)", maxHeight: 400, overflowY: "auto" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "4px 8px 8px", fontFamily: "'DM Sans', sans-serif" }}>{t("searchResults", lang)}</div>
+                {searchResults === "empty" ? (
+                  <div style={{ padding: "12px 8px", fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif" }}>{t("noResults", lang)}</div>
+                ) : (
+                  <>
+                    {searchResults.products.length > 0 && (
+                      <>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.accent, textTransform: "uppercase", letterSpacing: 1, padding: "8px 8px 4px", fontFamily: "'DM Sans', sans-serif" }}>{t("searchProducts", lang)}</div>
+                        {searchResults.products.map(p => (
+                          <button key={p.id} onClick={() => { if (setActive) setActive("provision"); setSearchQuery(""); setShowSearch(false); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px 8px", borderRadius: 8, border: "none", background: "transparent", color: COLORS.white, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, textAlign: "left" }} onMouseEnter={e => e.currentTarget.style.background = COLORS.accentDim} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                            <span style={{ fontSize: 12, color: COLORS.muted }}>{p.name}</span>
+                            <span style={{ marginLeft: "auto", fontSize: 12, color: COLORS.accent }}>${p.price.toFixed(2)}</span>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                    {searchResults.vessels.length > 0 && (
+                      <>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.accent, textTransform: "uppercase", letterSpacing: 1, padding: "8px 8px 4px", fontFamily: "'DM Sans', sans-serif" }}>{t("searchVessels", lang)}</div>
+                        {searchResults.vessels.map((v, i) => (
+                          <button key={i} onClick={() => { if (setActive) setActive("fleet"); setSearchQuery(""); setShowSearch(false); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px 8px", borderRadius: 8, border: "none", background: "transparent", color: COLORS.white, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, textAlign: "left" }} onMouseEnter={e => e.currentTarget.style.background = COLORS.accentDim} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                            <span style={{ fontSize: 12, color: COLORS.muted }}>{v.name}</span>
+                            <span style={{ marginLeft: "auto", fontSize: 11, color: COLORS.muted }}>{v.location}</span>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                    {searchResults.orders.length > 0 && (
+                      <>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.accent, textTransform: "uppercase", letterSpacing: 1, padding: "8px 8px 4px", fontFamily: "'DM Sans', sans-serif" }}>{t("searchOrders", lang)}</div>
+                        {searchResults.orders.map(o => (
+                          <button key={o.id} onClick={() => { if (setActive) setActive("orders"); setSearchQuery(""); setShowSearch(false); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "8px 8px", borderRadius: 8, border: "none", background: "transparent", color: COLORS.white, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontSize: 13, textAlign: "left" }} onMouseEnter={e => e.currentTarget.style.background = COLORS.accentDim} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                            <span style={{ fontSize: 12, color: COLORS.accent, fontFamily: "'DM Mono', monospace" }}>{o.id}</span>
+                            <span style={{ fontSize: 12, color: COLORS.muted }}>{o.vessel}</span>
+                            <span style={{ marginLeft: "auto", fontSize: 12, color: COLORS.white }}>${o.total.toLocaleString()}</span>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
         {setLang && <LangToggle lang={lang} setLang={setLang} />}
-        <button style={{ width: 40, height: 40, minWidth: 40, borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 16, cursor: "pointer", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>⚑<span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.danger }} /></button>
+        <div style={{ position: "relative" }}>
+          <button onClick={() => setShowNotifs(!showNotifs)} style={{ width: 40, height: 40, minWidth: 40, borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 16, cursor: "pointer", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>⚑<span style={{ position: "absolute", top: 6, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.danger }} /></button>
+          {/* Notification dropdown */}
+          {showNotifs && (
+            <>
+              <div onClick={() => setShowNotifs(false)} style={{ position: "fixed", inset: 0, zIndex: 299 }} />
+              <div style={{ position: "absolute", right: 0, top: 48, width: 360, maxWidth: "90vw", borderRadius: 16, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, zIndex: 300, animation: "fadeInUp 0.2s ease both", boxShadow: "0 8px 32px rgba(0,0,0,0.4)", overflow: "hidden" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 16px 12px" }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{t("notifications", lang)}</span>
+                  <button onClick={() => setShowNotifs(false)} style={{ background: "none", border: "none", color: COLORS.accent, cursor: "pointer", fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{t("markAllRead", lang)}</button>
+                </div>
+                {notifications.map((n, i) => (
+                  <div key={i} style={{ display: "flex", gap: 12, padding: "12px 16px", borderTop: `1px solid ${COLORS.glassBorder}22`, alignItems: "flex-start" }}>
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: n.color, flexShrink: 0, marginTop: 5 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>{n.msg}</div>
+                      <div style={{ fontSize: 11, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>{n.time}</div>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ padding: "12px 16px", borderTop: `1px solid ${COLORS.glassBorder}`, textAlign: "center" }}>
+                  <button onClick={() => setShowNotifs(false)} style={{ background: "none", border: "none", color: COLORS.accent, cursor: "pointer", fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{t("viewAllNotifs", lang)}</button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
 }
 
-function Dashboard({ setActive, orders, setInitialCart, lang, setLang }) {
+function Dashboard({ setActive, orders, setInitialCart, lang, setLang, setToast }) {
   const [showManifest, setShowManifest] = useState(false);
   const stats = [
     { label: t("activeOrders", lang), value: orders.length, change: t("plus3Today", lang), icon: "◈" },
@@ -660,7 +787,7 @@ function Dashboard({ setActive, orders, setInitialCart, lang, setLang }) {
   ];
   return (
     <div className="fade-in">
-      <Header title={t("bridgeOverview", lang)} subtitle={t("dashSubtitle", lang)} lang={lang} setLang={setLang} />
+      <Header title={t("bridgeOverview", lang)} subtitle={t("dashSubtitle", lang)} lang={lang} setLang={setLang} setActive={setActive} orders={orders} setToast={setToast} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 28 }}>
         {stats.map((s, i) => (
           <div key={i} className="card hover-lift" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, animationDelay: `${i * 0.08}s` }}>
@@ -759,7 +886,7 @@ function Dashboard({ setActive, orders, setInitialCart, lang, setLang }) {
             </div>
             <div style={{ fontSize: 11, color: COLORS.muted, fontStyle: "italic", marginBottom: 20, fontFamily: "'DM Sans', sans-serif" }}>{t("generatedBy", lang)}</div>
             <div style={{ display: "flex", gap: 12 }}>
-              <button onClick={() => alert(t("manifestGenerated", lang))} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("downloadPdf", lang)}</button>
+              <button onClick={() => setToast(t("manifestGenerated", lang))} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("downloadPdf", lang)}</button>
               <button onClick={() => setShowManifest(false)} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("close", lang)}</button>
             </div>
           </div>
@@ -769,7 +896,7 @@ function Dashboard({ setActive, orders, setInitialCart, lang, setLang }) {
   );
 }
 
-function ProvisionBuilder({ lang, setLang, orders, setOrders, setActive, initialCart, setInitialCart }) {
+function ProvisionBuilder({ lang, setLang, orders, setOrders, setActive, initialCart, setInitialCart, setToast }) {
   const [selectedCat, setSelectedCat] = useState("seafood");
   const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
@@ -784,7 +911,7 @@ function ProvisionBuilder({ lang, setLang, orders, setOrders, setActive, initial
 
   // Hydrate cart from reorder template
   useEffect(() => {
-    if (initialCart) { setCart(initialCart); setShowCart(true); setInitialCart(null); }
+    if (initialCart) { setCart(initialCart); setShowCart(true); setInitialCart(null); setToast(t("templateLoaded", lang)); }
   }, [initialCart]);
 
   const onSubmitOrder = () => {
@@ -799,7 +926,7 @@ function ProvisionBuilder({ lang, setLang, orders, setOrders, setActive, initial
 
   return (
     <div className="fade-in">
-      <Header title={t("smartProvBuilder", lang)} subtitle={t("provBuilderSub", lang)} lang={lang} setLang={setLang} />
+      <Header title={t("smartProvBuilder", lang)} subtitle={t("provBuilderSub", lang)} lang={lang} setLang={setLang} setActive={setActive} orders={orders} setToast={setToast} />
       <div className="provision-grid">
         <div className="card provision-categories" style={{ padding: 16, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, alignSelf: "start", position: "sticky", top: 20 }}>
           <div className="categories-label" style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 1.5, padding: "8px 12px", fontFamily: "'DM Sans', sans-serif" }}>{t("categories", lang)}</div>
@@ -930,10 +1057,10 @@ function ProvisionBuilder({ lang, setLang, orders, setOrders, setActive, initial
   );
 }
 
-function FleetView({ lang, setLang, setActive }) {
+function FleetView({ lang, setLang, setActive, setToast, orders }) {
   return (
     <div className="fade-in">
-      <Header title={t("fleetDashboard", lang)} subtitle={t("fleetSub", lang)} lang={lang} setLang={setLang} />
+      <Header title={t("fleetDashboard", lang)} subtitle={t("fleetSub", lang)} lang={lang} setLang={setLang} setActive={setActive} orders={orders} setToast={setToast} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
         {FLEET.map((v, i) => (
           <div key={i} className="card hover-lift" style={{ padding: 24, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, animationDelay: `${i * 0.08}s` }}>
@@ -963,13 +1090,13 @@ function FleetView({ lang, setLang, setActive }) {
   );
 }
 
-function OrdersView({ orders, lang, setLang }) {
+function OrdersView({ orders, lang, setLang, setActive, setToast }) {
   const [filter, setFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const filtered = filter === "all" ? orders : orders.filter(o => o.status === filter);
   return (
     <div className="fade-in">
-      <Header title={t("orderManagement", lang)} subtitle={t("ordersSub", lang)} lang={lang} setLang={setLang} />
+      <Header title={t("orderManagement", lang)} subtitle={t("ordersSub", lang)} lang={lang} setLang={setLang} setActive={setActive} orders={orders} setToast={setToast} />
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
         {[{ key: "all", label: t("filterAll", lang) }, { key: "delivering", label: t("filterDelivering", lang) }, { key: "pending", label: t("filterPending", lang) }, { key: "complete", label: t("filterComplete", lang) }].map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)} style={{ padding: "8px 18px", borderRadius: 10, border: `1px solid ${filter === f.key ? COLORS.accent : COLORS.glassBorder}`, background: filter === f.key ? COLORS.accentDim : "transparent", color: filter === f.key ? COLORS.accent : COLORS.silver, fontSize: 12, fontWeight: 600, cursor: "pointer", textTransform: "capitalize" }}>{f.label}</button>
@@ -1049,7 +1176,7 @@ function OrdersView({ orders, lang, setLang }) {
   );
 }
 
-function SuppliersView({ lang, setLang }) {
+function SuppliersView({ lang, setLang, setActive, orders, setToast }) {
   const suppliers = [
     { name: "Ocean Prime Seafood", category: "Seafood", rating: 4.9, orders: 234, revenue: "$142K", fill: "99.2%", status: "Premium" },
     { name: "Prestige Wine & Spirits", category: "Beverages", rating: 5.0, orders: 187, revenue: "$298K", fill: "98.8%", status: "Premium" },
@@ -1072,7 +1199,7 @@ function SuppliersView({ lang, setLang }) {
   ];
   return (
     <div className="fade-in">
-      <Header title={t("supplierNetwork", lang)} subtitle={t("suppliersSub", lang)} lang={lang} setLang={setLang} />
+      <Header title={t("supplierNetwork", lang)} subtitle={t("suppliersSub", lang)} lang={lang} setLang={setLang} setActive={setActive} orders={orders} setToast={setToast} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 28 }}>
         {[{ label: t("activeSuppliers", lang), value: "18", sub: t("tenCategories", lang) }, { label: t("avgFillRate", lang), value: "98.4%", sub: t("vsLastMonth", lang) }, { label: t("supplierGMV", lang), value: "$830K", sub: t("last30Days", lang) }].map((s, i) => (
           <div key={i} className="card" style={{ padding: 20, borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}` }}>
@@ -1144,6 +1271,171 @@ function LangToggle({ lang, setLang, style }) {
 }
 
 /* ================================================================
+   TOAST
+   ================================================================ */
+
+function Toast({ message, onDone }) {
+  useEffect(() => { const timer = setTimeout(onDone, 3000); return () => clearTimeout(timer); }, [onDone]);
+  return (
+    <div style={{ position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)", zIndex: 9000, padding: "14px 28px", borderRadius: 14, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, borderLeft: `3px solid ${COLORS.accent}`, backdropFilter: "blur(20px)", color: COLORS.white, fontSize: 13, fontWeight: 500, fontFamily: "'DM Sans', sans-serif", animation: "fadeInUp 0.3s ease both", boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
+      {message}
+    </div>
+  );
+}
+
+/* ================================================================
+   PROFILE MENU MODAL
+   ================================================================ */
+
+function ProfileMenuModal({ activeModal, setActiveModal, lang, setToast }) {
+  if (!activeModal) return null;
+
+  const modalContent = () => {
+    switch (activeModal) {
+      case "profile":
+        return (
+          <div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24 }}>
+              <div style={{ width: 72, height: 72, borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 700, color: COLORS.deepNavy, fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>JR</div>
+              <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{t("profileName", lang)}</h3>
+              <span style={{ fontSize: 13, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif", marginTop: 4 }}>{t("profileRole", lang)}</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "12px 16px" }}>
+              {[
+                ["Email", t("profileEmail", lang)],
+                [t("profilePhone", lang), "+1 (954) 555-0123"],
+                [t("profileVessel", lang), "M/Y Serenity"],
+                [t("profileMemberSince", lang), "January 2025"],
+              ].map(([label, value], i) => (
+                <div key={i} style={{ display: "contents" }}>
+                  <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{label}</span>
+                  <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case "account":
+        return (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+              <span style={{ fontSize: 13, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{t("planLabel", lang)}</span>
+              <span style={{ padding: "4px 14px", borderRadius: 20, background: COLORS.accentDim, color: COLORS.accent, fontSize: 13, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>{t("fleetPro", lang)}</span>
+            </div>
+            <div style={{ padding: 16, borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, marginBottom: 20 }}>
+              <p style={{ fontSize: 13, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: 0 }}>{t("planDesc", lang)}</p>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "12px 16px" }}>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{t("accountStatus", lang)}</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.success }} /><span style={{ fontSize: 13, color: COLORS.success, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{t("accountActive", lang)}</span></span>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{t("renewalDate", lang)}</span>
+              <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>March 1, 2026</span>
+            </div>
+          </div>
+        );
+      case "billing":
+        return (
+          <div>
+            <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "12px 16px", marginBottom: 24 }}>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{t("paymentMethod", lang)}</span>
+              <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{t("cardEnding", lang)}</span>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{t("nextInvoice", lang)}</span>
+              <span style={{ fontSize: 13, color: COLORS.accent, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>$800.00 — March 1, 2026</span>
+            </div>
+            <div style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>{t("invoiceHistory", lang)}</div>
+            <div style={{ borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, overflow: "hidden" }}>
+              {[
+                ["Feb 2026", "$800.00", "Paid"],
+                ["Jan 2026", "$800.00", "Paid"],
+                ["Dec 2025", "$750.00", "Paid"],
+              ].map(([date, amount, status], i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 100px 80px", padding: "12px 16px", borderBottom: i < 2 ? `1px solid ${COLORS.glassBorder}22` : "none", alignItems: "center" }}>
+                  <span style={{ fontSize: 13, color: COLORS.white }}>{date}</span>
+                  <span style={{ fontSize: 13, color: COLORS.accent, fontWeight: 600 }}>{amount}</span>
+                  <span style={{ fontSize: 11, color: COLORS.success, fontWeight: 600 }}>{status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case "settings":
+        return <SettingsModalContent lang={lang} setToast={setToast} setActiveModal={setActiveModal} />;
+      case "help":
+        return (
+          <div>
+            <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: "12px 16px", marginBottom: 24 }}>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>Email</span>
+              <span style={{ fontSize: 13, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif" }}>{t("helpEmail", lang)}</span>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>{t("profilePhone", lang)}</span>
+              <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{t("helpPhone", lang)}</span>
+              <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif" }}>Hours</span>
+              <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{t("helpHours", lang)}</span>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              {[{ label: t("helpChat", lang) }, { label: t("helpDocs", lang) }, { label: t("helpFaq", lang) }].map((btn, i) => (
+                <button key={i} onClick={() => setToast("Coming soon")} className="hover-lift" style={{ flex: 1, padding: "12px 0", borderRadius: 12, border: `1px solid ${COLORS.glassBorder}`, background: COLORS.glass, color: COLORS.silver, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{btn.label}</button>
+              ))}
+            </div>
+          </div>
+        );
+      default: return null;
+    }
+  };
+
+  const titles = { profile: t("profileTitle", lang), account: t("accountTitle", lang), billing: t("billingTitle", lang), settings: t("settingsTitle", lang), help: t("helpTitle", lang) };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 600, background: "rgba(6,20,37,0.85)", backdropFilter: "blur(20px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setActiveModal(null)}>
+      <div onClick={e => e.stopPropagation()} style={{ maxWidth: 520, width: "100%", borderRadius: 20, background: COLORS.deepNavy, border: `1px solid ${COLORS.glassBorder}`, padding: 32, animation: "fadeInUp 0.4s ease both", maxHeight: "90vh", overflowY: "auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <h3 style={{ fontSize: 20, fontWeight: 400, color: COLORS.white, fontFamily: "'Playfair Display', serif", margin: 0 }}>{titles[activeModal]}</h3>
+          <button onClick={() => setActiveModal(null)} style={{ background: "none", border: "none", color: COLORS.silver, cursor: "pointer", fontSize: 20 }}>✕</button>
+        </div>
+        <div style={{ width: "100%", height: 1, background: `linear-gradient(90deg, transparent, ${COLORS.accent}, transparent)`, marginBottom: 24 }} />
+        {modalContent()}
+      </div>
+    </div>
+  );
+}
+
+function SettingsModalContent({ lang, setToast, setActiveModal }) {
+  const [emailNotif, setEmailNotif] = useState(true);
+  const [pushNotif, setPushNotif] = useState(true);
+  const [orderUpd, setOrderUpd] = useState(true);
+  const [deliveryAlert, setDeliveryAlert] = useState(true);
+
+  const toggleStyle = (on) => ({
+    padding: "6px 16px", borderRadius: 20, border: `1px solid ${on ? COLORS.accent + "44" : COLORS.glassBorder}`,
+    background: on ? COLORS.accentDim : "transparent", color: on ? COLORS.accent : COLORS.muted,
+    fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif"
+  });
+
+  return (
+    <div>
+      <div style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 12 }}>{t("notifPrefs", lang)}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+        {[
+          { label: t("emailNotifs", lang), val: emailNotif, set: setEmailNotif },
+          { label: t("pushNotifs", lang), val: pushNotif, set: setPushNotif },
+          { label: t("orderUpdates", lang), val: orderUpd, set: setOrderUpd },
+          { label: t("deliveryAlerts", lang), val: deliveryAlert, set: setDeliveryAlert },
+        ].map((item, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 13, color: COLORS.white, fontFamily: "'DM Sans', sans-serif" }}>{item.label}</span>
+            <button onClick={() => item.set(!item.val)} style={toggleStyle(item.val)}>{item.val ? "ON" : "OFF"}</button>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>{t("defaultVessel", lang)}</div>
+      <div style={{ padding: "10px 16px", borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", marginBottom: 20 }}>M/Y Serenity</div>
+      <div style={{ fontSize: 11, color: COLORS.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "'DM Sans', sans-serif", marginBottom: 8 }}>{t("language", lang)}</div>
+      <div style={{ padding: "10px 16px", borderRadius: 12, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, color: COLORS.white, fontSize: 13, fontFamily: "'DM Sans', sans-serif", marginBottom: 24 }}>{lang === "en" ? "English" : "Español"}</div>
+      <button onClick={() => { setToast(t("settingsSaved", lang)); setActiveModal(null); }} className="hover-lift" style={{ width: "100%", padding: "12px 0", borderRadius: 12, border: "none", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentLight})`, color: COLORS.deepNavy, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>{t("save", lang)}</button>
+    </div>
+  );
+}
+
+/* ================================================================
    ROOT
    ================================================================ */
 
@@ -1156,15 +1448,16 @@ export default function YachtProvisionsPro() {
   useEffect(() => { try { localStorage.setItem("ypp-lang", lang); } catch {} }, [lang]);
   const [orders, setOrders] = useState(INITIAL_ORDERS);
   const [initialCart, setInitialCart] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const renderPage = () => {
     switch (activePage) {
-      case "dashboard": return <Dashboard setActive={setActivePage} orders={orders} setInitialCart={setInitialCart} lang={lang} setLang={setLang} />;
-      case "provision": return <ProvisionBuilder orders={orders} setOrders={setOrders} setActive={setActivePage} initialCart={initialCart} setInitialCart={setInitialCart} lang={lang} setLang={setLang} />;
-      case "fleet": return <FleetView setActive={setActivePage} lang={lang} setLang={setLang} />;
-      case "orders": return <OrdersView orders={orders} lang={lang} setLang={setLang} />;
-      case "suppliers": return <SuppliersView lang={lang} setLang={setLang} />;
-      default: return <Dashboard setActive={setActivePage} orders={orders} setInitialCart={setInitialCart} lang={lang} setLang={setLang} />;
+      case "dashboard": return <Dashboard setActive={setActivePage} orders={orders} setInitialCart={setInitialCart} lang={lang} setLang={setLang} setToast={setToast} />;
+      case "provision": return <ProvisionBuilder orders={orders} setOrders={setOrders} setActive={setActivePage} initialCart={initialCart} setInitialCart={setInitialCart} lang={lang} setLang={setLang} setToast={setToast} />;
+      case "fleet": return <FleetView setActive={setActivePage} lang={lang} setLang={setLang} setToast={setToast} orders={orders} />;
+      case "orders": return <OrdersView orders={orders} lang={lang} setLang={setLang} setActive={setActivePage} setToast={setToast} />;
+      case "suppliers": return <SuppliersView lang={lang} setLang={setLang} setActive={setActivePage} orders={orders} setToast={setToast} />;
+      default: return <Dashboard setActive={setActivePage} orders={orders} setInitialCart={setInitialCart} lang={lang} setLang={setLang} setToast={setToast} />;
     }
   };
 
@@ -1335,12 +1628,13 @@ export default function YachtProvisionsPro() {
           display: "flex",
           animation: "appReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both",
         }}>
-          <SideNav active={activePage} setActive={setActivePage} lang={lang} />
+          <SideNav active={activePage} setActive={setActivePage} lang={lang} setShowPitch={setShowPitch} setToast={setToast} />
           <main className="app-main" style={{ flex: 1, marginLeft: 72, padding: "28px 32px", minHeight: "100vh" }}>
             {renderPage()}
           </main>
         </div>
       )}
+      {toast && <Toast message={toast} onDone={() => setToast(null)} />}
     </LangContext.Provider>
   );
 }
