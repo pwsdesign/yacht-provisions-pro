@@ -34,7 +34,7 @@ function PitchDeck({ onFinish, lang, setLang }) {
     setTimeout(() => setEntered(true), 100);
   }, []);
 
-  const totalSlides = 4;
+  const totalSlides = 5;
 
   const goNext = () => {
     if (transitioning) return;
@@ -67,7 +67,7 @@ function PitchDeck({ onFinish, lang, setLang }) {
     return () => window.removeEventListener("keydown", handler);
   });
 
-  const slideNames = [t("slideTitle", lang), t("slideProblem", lang), t("slideSolution", lang), t("slideMarket", lang), t("slideRevenue", lang)];
+  const slideNames = [t("slideTitle", lang), t("slideProblem", lang), t("slideSolution", lang), t("slideMarket", lang), t("slideWhyUs", lang), t("slideRevenue", lang)];
 
   return (
     <div className="pitch-deck" style={{
@@ -113,7 +113,8 @@ function PitchDeck({ onFinish, lang, setLang }) {
         {currentSlide === 0 && <ProblemSlide lang={lang} />}
         {currentSlide === 1 && <SolutionSlide lang={lang} />}
         {currentSlide === 2 && <MarketSlide lang={lang} />}
-        {currentSlide === 3 && <RevenueSlide lang={lang} />}
+        {currentSlide === 3 && <WhyUsSlide lang={lang} />}
+        {currentSlide === 4 && <RevenueSlide lang={lang} />}
       </div>
 
       {/* Bottom nav */}
@@ -311,6 +312,93 @@ function MarketSlide({ lang }) {
   );
 }
 
+function WhyUsSlide({ lang }) {
+  const gaps = [t("gap1", lang), t("gap2", lang), t("gap3", lang), t("gap4", lang)];
+  const moats = [
+    { title: t("moat1Title", lang), desc: t("moat1Desc", lang), icon: "🤝" },
+    { title: t("moat2Title", lang), desc: t("moat2Desc", lang), icon: "❄️" },
+    { title: t("moat3Title", lang), desc: t("moat3Desc", lang), icon: "📍" },
+  ];
+  return (
+    <div className="pitch-slide-content" style={{ maxWidth: 1000, width: "100%", padding: "0 48px" }}>
+      {/* Header */}
+      <div style={{ textAlign: "center", marginBottom: 28 }}>
+        <div className="slide-enter" style={{ animationDelay: "0.1s" }}>
+          <span style={{ display: "inline-block", padding: "6px 16px", borderRadius: 8, background: "rgba(26,107,122,0.15)", border: "1px solid rgba(42,141,156,0.25)", color: COLORS.seaLight, fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", marginBottom: 16 }}>{t("whyUs", lang)}</span>
+        </div>
+        <div className="slide-enter" style={{ animationDelay: "0.2s" }}>
+          <h2 className="pitch-h2" style={{ fontSize: 34, fontWeight: 300, fontFamily: "'Playfair Display', serif", letterSpacing: -1, margin: "0 0 8px 0", lineHeight: 1.3 }}>{t("whyUsH2a", lang)}<span style={{ color: COLORS.accent, fontStyle: "italic" }}>{t("whyUsH2b", lang)}</span></h2>
+        </div>
+      </div>
+
+      <div className="why-us-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        {/* LEFT: Landscape + comparison */}
+        <div>
+          {/* Landscape */}
+          <div className="slide-enter" style={{ animationDelay: "0.3s", marginBottom: 16 }}>
+            <div style={{ padding: 20, borderRadius: 16, background: COLORS.glass, border: `1px solid ${COLORS.glassBorder}`, backdropFilter: "blur(10px)" }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 2, fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>{t("landscapeTitle", lang)}</div>
+              <p style={{ fontSize: 12, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: "0 0 16px 0" }}>{t("landscapeDesc", lang)}</p>
+              {/* Tracking vs Execution comparison */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 12, alignItems: "center" }}>
+                <div style={{ padding: 12, borderRadius: 10, background: "rgba(107,114,128,0.1)", border: "1px solid rgba(107,114,128,0.15)", textAlign: "center" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{t("existingLabel", lang)}</div>
+                  <div style={{ fontSize: 11, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{t("existingDesc", lang)}</div>
+                </div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif", textTransform: "uppercase", letterSpacing: 1 }}>vs</div>
+                <div style={{ padding: 12, borderRadius: 10, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}33`, textAlign: "center" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.accent, fontFamily: "'DM Sans', sans-serif", marginBottom: 4 }}>{t("yppLabel", lang)}</div>
+                  <div style={{ fontSize: 11, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{t("yppDesc", lang)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* The Gap quote */}
+          <div className="slide-enter" style={{ animationDelay: "0.4s" }}>
+            <div style={{ padding: 16, borderRadius: 12, borderLeft: `3px solid ${COLORS.danger}`, background: "rgba(248,113,113,0.05)" }}>
+              <p style={{ fontSize: 12, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.7, margin: 0, fontStyle: "italic" }}>{t("gapQuote", lang)}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT: What no one else does + Moat */}
+        <div>
+          {/* What no one else does */}
+          <div className="slide-enter" style={{ animationDelay: "0.45s", marginBottom: 16 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.accent, textTransform: "uppercase", letterSpacing: 2, fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>{t("noOneElseTitle", lang)}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {gaps.map((g, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", borderRadius: 10, background: COLORS.accentDim, border: `1px solid ${COLORS.accent}22` }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: `${COLORS.accent}22`, color: COLORS.accent, fontWeight: 800, fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
+                  <div style={{ fontSize: 12, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5 }}>{g}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Moat */}
+          <div className="slide-enter" style={{ animationDelay: "0.6s" }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.muted, textTransform: "uppercase", letterSpacing: 2, fontFamily: "'DM Sans', sans-serif", marginBottom: 6 }}>{t("moatTitle", lang)}</div>
+            <p style={{ fontSize: 11, color: COLORS.silver, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.5, margin: "0 0 10px 0" }}>{t("moatDesc", lang)}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {moats.map((m, i) => (
+                <div key={i} className="hover-lift" style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "12px 14px", borderRadius: 12, background: `linear-gradient(160deg, rgba(26,107,122,0.08) 0%, transparent 100%)`, border: `1px solid ${COLORS.sea}33`, transition: "all 0.3s" }}>
+                  <div style={{ fontSize: 18, flexShrink: 0 }}>{m.icon}</div>
+                  <div>
+                    <h4 style={{ fontSize: 12, fontWeight: 700, color: COLORS.white, fontFamily: "'DM Sans', sans-serif", margin: "0 0 2px 0" }}>{m.title}</h4>
+                    <p style={{ fontSize: 11, color: COLORS.muted, lineHeight: 1.5, fontFamily: "'DM Sans', sans-serif", margin: 0 }}>{m.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RevenueSlide({ lang }) {
   const streams = [
     { name: t("rev1Name", lang), rate: "15–22%", example: t("rev1Ex", lang), desc: t("rev1Desc", lang), color: COLORS.accent },
@@ -352,7 +440,7 @@ function RevenueSlide({ lang }) {
           {[
             { label: t("revAvgOrder", lang), value: "$5K–$15K" },
             { label: t("revPerOrder", lang), value: "$1,050–$2,850" },
-            { label: t("revCaptains", lang), value: "$2–5M GMV" },
+            { label: t("revCaptains", lang), value: "$2–5M orders" },
             { label: t("revSeedRound", lang), value: "$750K–$1.5M" },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: "center" }}>
@@ -1217,6 +1305,9 @@ export default function YachtProvisionsPro() {
 
           /* Solution slide grid */
           .solution-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+          /* Why Us slide grid */
+          .why-us-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
 
           /* Tighter pitch slide cards */
           .pitch-slide-content .slide-enter { padding: 14px !important; }
